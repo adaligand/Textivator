@@ -1,0 +1,406 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gap-fill Exercise Generator</title>
+  <style>
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px; /* Adjust font size as needed */
+      font-family: Arial, sans-serif; /* Adjust font family as needed */
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 2px;
+      background-color: #10148;
+      color: #000000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .hide {
+      display: none;
+    }
+
+    #exerciseOutput {
+      font-size: 18px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em; /* Adjust word spacing as needed */
+    }
+
+    input {
+      width: 13px; /* Adjust the width as needed */
+      text-align: center;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px; /* Adjust the thickness of the bottom border */
+      transition: border 0.3s;
+      font-size: inherit;
+      font-family: inherit;
+      margin-right: 2px; /* Add a small gap between adjacent textboxes */
+    }
+
+    input:focus {
+      outline: none;
+      border: none;
+      border-left: transparent;
+      border-right: transparent;
+      border-top: transparent;
+      border-bottom: 1px solid black;
+      border-bottom-width: 0.5px; /* Adjust the thickness of the bottom border */
+    }
+
+    .keyboard-container {
+      margin-top: 20px;
+      text-align: center; /* Center the text horizontally */
+    }
+
+    /* Updated keyboard button styles */
+    .keyboard-button {
+      font-size: 18px;
+      padding: 10px 15px;
+      margin: 2px;
+      border: none;
+      border-radius: 10px;
+      background-color: #10148; /* Medium dark grey background */
+      color: #000000; /* White text */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for volume */
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .keyboard-button:hover {
+      background-color: #A9A9A9; /* Slightly darker grey background on hover */
+      transform: translateY(-4px); /* Add slight lift effect on hover */
+    }
+  
+/* Added styles for dropdown menus */
+    select {
+      width: 13%;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      height: 35px;
+    }
+    @media screen {
+      .print-title-container {
+        display: none;
+      }
+
+      .on-screen-title {
+        font-size: 40px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .screen-title {
+        display: none;
+      }
+    }
+    .subtitle {
+  font-size: 16px;
+  margin-bottom: 10px;
+  }
+
+    /* Styles for printing */
+    @media print {
+  /* Hide all elements outside the embedded code during printing */
+  body > :not(.container),
+  body > :not(.container) * {
+    display: none !important;
+  }
+  /* Show the relevant container during printing */
+  .container {
+    display: block !important;
+  }
+ /* Hide the subtitle */
+  .subtitle {
+    display: none !important;
+  }
+  /* Additional styles for elements within the embedded code */
+  .container {
+    padding: 0 !important;
+  }
+
+  /* Show the screen title */
+  .screen-title {
+    display: block !important;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  /* Hide the drop-down menu */
+  select {
+    display: none !important;
+  }
+
+  /* Hide elements not part of the embedded code */
+  .keyboard-container,
+  button,
+  #embeddedPage,
+  .on-screen-title,
+  .keyboard-container {
+    display: none !important;
+  }
+
+  /* Style the print title */
+  .print-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  /* Show the exercise output */
+  #exerciseOutput {
+    display: block !important;
+  }
+}
+  </style>
+</head>
+<body onload="initialize()">
+  <!-- Print title container -->
+  <div class="print-title-container">
+    <div class="print-title">Fill in the text with the missing letters</div>
+  </div>
+
+  <div class="container">
+    <div class="on-screen-title">Lettrator</div>
+    <br><br>
+    <div class="subtitle" id="subtitle">First letter only : Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
+    <div class="screen-title">Fill in the text with the missing letters</div>
+    <br><br>
+    <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+    <select id="languageSelect">
+      <option value="french">French</option>
+      <option value="german">German</option>
+      <option value="spanish">Spanish</option>
+    </select>
+    <button onclick="generateExercise()">Generate Exercise</button>
+    <button id="checkButton" class="hide" onclick="checkExercise()">Check Exercise</button>
+    <div id="exerciseOutput" class="hide"></div>
+    <div id="feedback" class="hide"></div>
+     <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
+  </div>
+  <div class="keyboard-container"></div>
+  
+  <script>
+       function initialize() {
+      document.getElementById('textInput').value = '';
+      generateKeyboard(document.getElementById('languageSelect').value); // Generate keyboard based on initially selected language
+    }
+
+    function generateKeyboard(language) {
+      var keyboardContainer = document.querySelector('.keyboard-container');
+      keyboardContainer.innerHTML = ''; // Clear previous keyboard
+
+
+      var vowels = [];
+      switch (language) {
+          case 'french':
+          vowels = ['à', 'â', 'ä','é', 'è', 'ê', 'ë', 'î', 'ï', 'ô','ö', 'ù', 'ü', 'û', 'ç'];
+          break;
+        case 'german':
+          vowels = ['ä', 'ö', 'ü', 'ß'];
+          break;
+        
+        case 'spanish':
+          vowels = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
+          break;
+        default:
+          vowels = ['a', 'e', 'i', 'o', 'u'];
+          break;
+      }
+
+      vowels.forEach(function (vowel) {
+        var button = document.createElement('button');
+        button.innerHTML = vowel; // Use innerHTML to handle HTML entities
+        button.className = 'keyboard-button';
+        button.setAttribute('onclick', 'insertLetter("' + vowel + '")');
+        keyboardContainer.appendChild(button);
+      });
+    }
+
+    // Function to handle language selection change
+    document.getElementById('languageSelect').addEventListener('change', function () {
+      var selectedLanguage = this.value;
+      generateKeyboard(selectedLanguage);
+    });
+
+function generateExercise() {
+  var textInput = document.getElementById('textInput').value;
+  var modifiedText = '';
+
+  // Split the text into words
+  var words = textInput.split(/\s+/);
+
+  words.forEach(function(word) {
+    var modifiedWord = '';
+    var isFirstLetter = true;
+
+    // Process each character in the word
+    for (var i = 0; i < word.length; i++) {
+      var char = word.charAt(i);
+
+      // Check if the character is a non-first-letter character and not a punctuation mark
+      if (char.match(/[a-zA-Zàáâäèéêëîïíôóöùúûüñßç]/) && !isFirstLetter) {
+        modifiedWord += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event); handleEnter(this, event)">';
+      } else {
+        modifiedWord += char;
+      }
+
+      // Update isFirstLetter flag
+      if (char.match(/[a-zA-Zàáâäèéêëîïíôóöùúûüñßç]/)) {
+        isFirstLetter = false;
+      }
+    }
+
+    modifiedText += modifiedWord + ' '; // Add the modified word back with space
+  });
+
+  var exerciseOutput = document.getElementById('exerciseOutput');
+  exerciseOutput.innerHTML = modifiedText;
+  exerciseOutput.classList.remove('hide');
+
+  document.getElementById('textInput').classList.add('hide');
+  document.getElementById('checkButton').classList.remove('hide');
+    // Hide the subtitle
+    var subtitle = document.getElementById('subtitle');
+    subtitle.classList.add('hide');
+  // Focus on the first input box
+  var firstInput = exerciseOutput.querySelector('input');
+  if (firstInput) {
+    firstInput.focus();
+  }
+}
+    function isVowel(char) {
+      return ['a', 'e', 'i', 'o', 'u', 'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'î', 'ï', 'í', 'ô', 'ó', 'ö', 'ù', 'ú', 'û', 'ü', 'ñ'].includes(char);
+    }
+
+    var focusedInput; // Variable to store the currently focused input element
+
+    function insertLetter(letter) {
+      if (focusedInput) {
+        focusedInput.value = letter;
+        moveToNext(focusedInput);
+      }
+    }
+
+    document.addEventListener('focusin', function(event) {
+      if (event.target.tagName.toLowerCase() === 'input') {
+        focusedInput = event.target;
+      }
+    });
+
+    function moveToNext(input) {
+      if (input.value.length >= 1) {
+        var nextInput = input.nextElementSibling;
+        if (nextInput && nextInput.tagName === 'INPUT') {
+          nextInput.focus();
+        }
+      }
+    }
+
+    function handleBackspace(input, event) {
+      if (event.key === 'Backspace' && input.value.length === 0) {
+        var prevInput = input.previousElementSibling;
+        if (prevInput && prevInput.tagName === 'INPUT') {
+          prevInput.focus();
+        }
+      }
+    }
+
+    function handleEnter(input, event) {
+      if (event.key === 'Enter') {
+        checkExercise();
+      }
+    }
+
+function checkExercise() {
+    var filledInputs = document.querySelectorAll('#exerciseOutput input');
+    var correctAnswers = 0;
+    var incorrectAnswers = 0;
+
+    filledInputs.forEach(function(input) {
+      var userInput = input.value.trim().toLowerCase();
+      var originalChar = input.dataset.original.toLowerCase();
+
+      if (userInput === originalChar) {
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+    });
+
+    var feedback = document.getElementById('feedback');
+    feedback.textContent = 'Correct answers: ' + correctAnswers + ', Incorrect answers: ' + incorrectAnswers;
+    feedback.classList.remove('hide');
+
+    if (incorrectAnswers === 0) {
+      // All answers are correct, show the reset button
+      document.getElementById('resetButton').classList.remove('hide');
+   }
+  }
+    // Call generateKeyboard initially with the default language
+    generateKeyboard('german');
+      </script>
+<script>
+     // Function to hide elements from the parent page when printing
+    function hideParentElementsOnPrint() {
+      var parentElements = window.parent.document.querySelectorAll('.element-to-hide-on-print');
+      parentElements.forEach(function(element) {
+        element.style.display = 'none';
+      });
+    }
+
+    // Function to restore hidden elements from the parent page after printing
+    function restoreParentElementsAfterPrint() {
+      var parentElements = window.parent.document.querySelectorAll('.element-to-hide-on-print');
+      parentElements.forEach(function(element) {
+        element.style.display = '';
+      });
+    }
+
+    // Function to trigger print dialog
+    function printEmbeddedHTML() {
+      hideParentElementsOnPrint(); // Hide elements from the parent page
+      window.print(); // Trigger print dialog
+      restoreParentElementsAfterPrint(); // Restore elements from the parent page after printing
+    }
+function resetExercise() {
+  // Reset the text area, hide the exercise output, show the input area, and hide the reset button
+  document.getElementById('textInput').value = '';
+  document.getElementById('exerciseOutput').innerHTML = '';
+  document.getElementById('exerciseOutput').classList.add('hide');
+  document.getElementById('textInput').classList.remove('hide');
+  document.getElementById('resetButton').classList.add('hide');
+  // Hide the check button
+  document.getElementById('checkButton').classList.add('hide');
+  // Show the subtitle
+  var subtitle = document.getElementById('subtitle');
+  subtitle.classList.remove('hide');
+}
+</script>
+</body>
+</html>
