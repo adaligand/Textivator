@@ -1,5 +1,5 @@
-<a href="https://adaligand.github.io/Textivator/textivator.html">Dragator
+<a href="https://adaligand.github.io/Textivator/Dragator.html">Dragator
   <p>
-<a href="https://adaligand.github.io/extivator/Pyramidor.html">Pyramidor
+<a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor
   </p>
   <p>
