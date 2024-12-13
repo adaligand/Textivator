@@ -188,6 +188,7 @@
   </div>
 
   <div class="container">
+    <button id="homeButton" onclick="goHome()">Home</button>
     <div class="on-screen-title">Vowelator</div>
     <br><br>
     <div class="subtitle" id="subtitle">Missing vowels: Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
@@ -401,6 +402,9 @@
 
     // Listen for keydown event on the document
     document.addEventListener('keydown', checkPrintKeyPress);
+      function goHome() {
+      window.location.href = "https://adaligand.github.io/Textivator/";
+    }
 </script>
 </body>
 </html>
