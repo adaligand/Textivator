@@ -2,7 +2,7 @@
   <p>
 <a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor
   <p>
-<a href="https://adaligand.github.io/Textivator/Pyramidor.html">Chunkator
+<a href="https://adaligand.github.io/Textivator/Chunkator.html">Chunkator
   <p>
   <a href="https://adaligand.github.io/Textivator/Gapfillator.html">Gapfillator
   <p>
