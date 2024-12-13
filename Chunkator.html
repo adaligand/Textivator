@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jumble Words Activity Generator</title>
+  <style>
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+    }
+
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px; /* Adjust margin as needed */
+    }
+.subtitle {
+  font-size: 16px;
+  margin-bottom: 10px;
+  }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #10148;
+      color: #000000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .hide {
+      display: none;
+    }
+
+    #exerciseOutput {
+      font-size: 18px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em;
+      margin-top: 20px; /* Adjust margin as needed */
+    }
+
+    .draggable-word {
+      display: inline-block;
+      cursor: pointer;
+      margin-right: 5px;
+      margin-bottom: 5px; /* Adjust margin as needed */
+      border: 1px solid black;
+      padding: 5px 10px;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+      line-height: 1; /* Adjust line height as needed */
+    }
+
+    .selected-words {
+      margin-top: 20px;
+      border: 2px dashed #ccc;
+      padding: 10px;
+      min-height: 50px;
+    }
+
+    .selected-word {
+      display: inline-block;
+      cursor: pointer;
+      margin-right: 5px;
+      margin-bottom: 10px;
+      border: 1px solid black;
+      padding: 5px 10px;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+    }
+select {
+  width: 13%;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  height: 35px;
+}
+@media print {
+    
+  /* Hide the Chunkator and Jumble the Words titles in print */
+  .title {
+    display: none;
+  }
+.subtitle {
+    display: none;
+  }
+  /* Hide unnecessary elements */
+  .input-container {
+    display: none;
+  }
+/* Centered and styled printed title */
+.print-title {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  display: block;
+}
+
+  /* Show the exercise output */
+  #exerciseOutput {
+    display: block !important;
+  }
+
+  /* Hide the title in print */
+  .title {
+    display: none;
+  }
+  /* Display print-only elements */
+  .print-only {
+    display: block;
+  }
+
+  /* Hide the label and dropdown */
+  label[for="chunkSize"],
+  #chunkSize {
+    display: none;
+  }
+
+  /* Hide the "Generate Exercise" button */
+  button {
+    display: none;
+  }
+
+  /* Hide the exercise output */
+  #exerciseOutput {
+    display: none;
+  }
+
+  /* Hide the selected words */
+  .selected-words {
+    display: none;
+  }
+
+  /* Hide ruled lines for writing */
+  .ruled-lines {
+    display: visible;
+  }
+
+  /* Display ruled lines for printing */
+  .ruled-line {
+    display: block;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    height: 20px;
+  }
+ }
+
+@media screen {
+  /* Show print title only on print preview */
+  .print-title {
+    display: none;
+  }
+}
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <!-- Printed title -->
+   <div class="print-title">Unjumble the words</div>
+
+    <!-- Title added here -->
+    <div class="title">Chunkator</div>
+<div class="subtitle" id="subtitle">Unjumble the chunks : Use the dropdown menu to select the size of the chunks you want to create and click on Generate exercise.</div>
+<br>
+    <!-- Text input and buttons -->
+    <div class="input-container">
+      <label for="chunkSize">Select Chunk Size:</label>
+      <select id="chunkSize">
+        <option value="1">Single Words</option>
+        <option value="2">Small chunks</option>
+        <option value="4">Medium chunks</option>
+        <option value="6">Big chunks</option>
+      </select>
+
+      <br><br>
+
+      <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+
+      <button onclick="generateExercise()">Generate Exercise</button>
+
+      <button id="checkButton" class="hide" onclick="checkExercise()">Check Exercise</button>
+      <button id="resetButton" class="hide" onclick="resetExercise()">Reset</button>
+    </div>
+
+    <!-- Generated words -->
+    <div id="exerciseOutput" class="hide"></div>
+
+    <!-- Selected words -->
+    <div id="selectedWords" class="selected-words hide"></div>
+
+    <!-- Feedback -->
+    <div id="feedback" class="hide"></div>
+
+        <!-- Ruled lines for writing -->
+    <div class="ruled-lines print-only">
+      <!-- Add ruled lines for writing -->
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+    </div>
+  </div>
+
+  <script>
+    function initialize() {
+      document.getElementById('textInput').value = '';
+    }
+
+    function generateExercise() {
+      var exerciseOutput = document.getElementById('exerciseOutput');
+      exerciseOutput.innerHTML = '';
+ var subtitle = document.getElementById('subtitle');
+  subtitle.classList.add('hide');
+      var textInput = document.getElementById('textInput').value;
+      var chunkSize = parseInt(document.getElementById('chunkSize').value); // Get selected chunk size
+      if (chunkSize === 1) { // If selected chunk size is 1, treat each word as an isolated chunk
+        var words = textInput.split(/\s+/).filter(Boolean); // Split text into words
+        var shuffledWords = shuffleArray(words); // Shuffle the words
+
+        for (var i = 0; i < shuffledWords.length; i++) {
+          var word = shuffledWords[i];
+          var wordElement = document.createElement('div');
+          wordElement.textContent = word;
+          wordElement.classList.add('draggable-word');
+          wordElement.setAttribute('draggable', 'true');
+          wordElement.setAttribute('ondragstart', 'drag(event)');
+          exerciseOutput.appendChild(wordElement);
+        }
+      } else { // Otherwise, split text into chunks of specified size
+        var chunks = getWordChunks(textInput, chunkSize); // Split text into chunks
+        var shuffledChunks = shuffleArray(chunks); // Shuffle the chunks
+
+        for (var i = 0; i < shuffledChunks.length; i++) {
+          var chunk = shuffledChunks[i].join(' '); // Join the words in the chunk
+          var chunkElement = document.createElement('div');
+          chunkElement.textContent = chunk;
+          chunkElement.classList.add('draggable-word');
+          chunkElement.setAttribute('draggable', 'true');
+          chunkElement.setAttribute('ondragstart', 'drag(event)');
+          exerciseOutput.appendChild(chunkElement);
+        }
+      }
+      var ruledLines = document.querySelector('.ruled-lines');
+      ruledLines.innerHTML = ''; // Clear previous content
+
+      var numLines = 20; // Adjust the number of ruled lines as needed
+      for (var i = 0; i < numLines; i++) {
+        var ruledLine = document.createElement('div');
+        ruledLine.classList.add('ruled-line');
+        ruledLines.appendChild(ruledLine);
+      }
+
+      exerciseOutput.classList.remove('hide');
+
+      var selectedWords = document.getElementById('selectedWords');
+      selectedWords.innerHTML = '';
+      selectedWords.classList.add('hide');
+
+      document.getElementById('textInput').classList.add('hide');
+      updateCheckButtonVisibility();
+
+      // Hide feedback when generating a new exercise
+      document.getElementById('feedback').classList.add('hide');
+    }
+
+    function getWordChunks(text, chunkSize) {
+      var words = text.split(/\s+/).filter(Boolean);
+      var chunks = [];
+      for (var i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize));
+      }
+      return chunks;
+    }
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    function allowDrop(event) {
+      event.preventDefault();
+      var dropzone = event.target.closest('.dropzone');
+      if (dropzone) {
+        dropzone.classList.add('highlight');
+      }
+    }
+
+    function drag(event) {
+      event.dataTransfer.setData('text/plain', event.target.textContent);
+    }
+
+    function drop(event) {
+      event.preventDefault();
+      var data = event.dataTransfer.getData('text');
+      var target = event.target.closest('.draggable-word');
+      if (target) {
+        target.textContent = data;
+      }
+      var dropzone = event.target.closest('.dropzone');
+      if (dropzone) {
+        dropzone.classList.remove('highlight');
+      }
+      updateCheckButtonVisibility();
+    }
+
+    function updateCheckButtonVisibility() {
+      var exerciseOutput = document.getElementById('exerciseOutput');
+      var checkButton = document.getElementById('checkButton');
+      if (exerciseOutput.querySelectorAll('.draggable-word').length === 0) {
+        checkButton.classList.remove('hide');
+      } else {
+        checkButton.classList.add('hide');
+      }
+    }
+
+function checkExercise() {
+    var selectedWords = document.querySelectorAll('.selected-word');
+    var userChunks = [];
+    selectedWords.forEach(function(word) {
+        userChunks.push(word.textContent.trim());
+    });
+
+    var originalText = document.getElementById('textInput').value;
+    var chunkSize = parseInt(document.getElementById('chunkSize').value);
+
+    var errors = 0;
+    if (chunkSize === 1) { // If selected chunk size is 1, compare each word
+        var originalWords = originalText.split(/\s+/).filter(Boolean);
+        for (var i = 0; i < originalWords.length; i++) {
+            if (userChunks[i] !== originalWords[i]) {
+                errors++;
+            }
+        }
+    } else { // Otherwise, compare each chunk
+        var originalChunks = getWordChunks(originalText, chunkSize);
+        for (var i = 0; i < originalChunks.length; i++) {
+            var originalChunk = originalChunks[i].join(' ');
+            if (userChunks[i] !== originalChunk) {
+                errors++;
+            }
+        }
+    }
+
+    var feedback = document.getElementById('feedback');
+    if (errors === 0) {
+        feedback.textContent = 'All chunks are in the correct order!';
+        document.getElementById('resetButton').classList.remove('hide');
+    } else {
+        feedback.textContent = 'Number of chunks in the wrong position: ' + errors;
+        document.getElementById('resetButton').classList.add('hide');
+    }
+
+    feedback.classList.remove('hide');
+}
+function resetExercise() {
+    // Reset text input
+    document.getElementById('textInput').value = '';
+
+    // Hide exercise output and selected words
+    document.getElementById('exerciseOutput').innerHTML = '';
+    document.getElementById('exerciseOutput').classList.add('hide');
+    document.getElementById('selectedWords').innerHTML = '';
+    document.getElementById('selectedWords').classList.add('hide');
+
+    // Show text input and generate exercise button
+    document.getElementById('textInput').classList.remove('hide');
+
+    // Hide reset button
+    document.getElementById('resetButton').classList.add('hide');
+
+    // Show subtitle
+    document.getElementById('subtitle').classList.remove('hide');
+
+    // Clear feedback
+    document.getElementById('feedback').classList.add('hide');
+
+    // Hide check button if subtitle is visible
+    if (!document.getElementById('subtitle').classList.contains('hide')) {
+        document.getElementById('checkButton').classList.add('hide');
+    }
+}
+    document.addEventListener('click', function(event) {
+      if (event.target.classList.contains('draggable-word')) {
+        var selectedWords = document.getElementById('selectedWords');
+        var wordClone = event.target.cloneNode(true);
+        wordClone.classList.remove('draggable-word');
+        wordClone.classList.add('selected-word');
+        wordClone.removeAttribute('draggable');
+        selectedWords.appendChild(wordClone);
+        event.target.parentNode.removeChild(event.target);
+        selectedWords.classList.remove('hide');
+        updateCheckButtonVisibility();
+      } else if (event.target.classList.contains('selected-word')) {
+        var exerciseOutput = document.getElementById('exerciseOutput');
+        var wordClone = event.target.cloneNode(true);
+        wordClone.classList.add('draggable-word');
+        wordClone.removeAttribute('ondragstart');
+        exerciseOutput.appendChild(wordClone);
+        event.target.parentNode.removeChild(event.target);
+        if (document.querySelectorAll('.selected-word').length === 0) {
+          document.getElementById('selectedWords').classList.add('hide');
+        }
+        updateCheckButtonVisibility();
+      }
+    });
+  </script>
+</body>
+</html>
