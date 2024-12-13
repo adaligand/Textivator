@@ -1,0 +1,279 @@
+Put your HTML text here<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Choice Exercise</title>
+    <style>
+        #exercise-container {
+            margin: 0 auto;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: transparent; 
+            opacity: 0.8;
+        }
+        #title {
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        #text-container {
+            margin-bottom: 20px;
+        }
+        #text-input {
+            width: 100%;
+            margin-bottom: 20px;
+            height: 150px;
+            border-radius: 5px;
+        }
+        #choices-container {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 2px;
+            background-color: #10148;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #A9A9A9;
+            transform: translateY(-4px);
+        }
+        .choice {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        .choice:hover {
+            background-color: #f0f0f0;
+        }
+        #dropbox-container {
+            margin-bottom: 20px;
+        }
+        .dropped-chunk {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dff0d8;
+        }
+        .feedback-message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        #reset-btn + #choices-container {
+            display: none;
+        }
+        #chunk-length {
+            width: 13%;
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            height: 35px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="exercise-container">
+        <div id="title">Pyramidor</div>
+        <div class="subtitle" id="subtitle">One in four : Use the dropdown menu to select the size of the chunks you want to create and click on Generate exercise.</div>
+        <br>
+        <textarea id="text-input" placeholder="Enter your text here..." rows="4" cols="50"></textarea>
+        <div id="text-container"></div>
+        <div id="choices-container"></div>
+        <div id="dropbox-container"></div>
+        <label for="chunk-length">Select chunk length:</label>
+        <select id="chunk-length">
+            <option value="1">Single words</option>
+            <option value="2">Small chunks</option>
+            <option value="4">Medium chunks</option>
+            <option value="6">Big chunks</option>
+        </select>
+        <button id="generate-btn">Generate Exercise</button>
+        <button id="reset-btn" style="display: none;">Reset</button>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const textInput = document.getElementById('text-input');
+    const textContainer = document.getElementById('text-container');
+    const choicesContainer = document.getElementById('choices-container');
+    const dropboxContainer = document.getElementById('dropbox-container');
+    const generateBtn = document.getElementById('generate-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const chunkLengthSelect = document.getElementById('chunk-length');
+
+    let originalText = '';
+    let chunks = [];
+    let correctChunks = [];
+    let droppedChunks = [];
+    let currentIndex = 0;
+    let exerciseCompleted = false;
+
+    // Generate text chunks based on the selected length
+    function generateChunks(text, length) {
+        const words = text.split(' ');
+        chunks = [];
+        for (let i = 0; i < words.length; i += length) {
+            chunks.push(words.slice(i, i + length).join(' '));
+        }
+        correctChunks = [...chunks]; // Set correct order of chunks
+    }
+
+    // Display the entire original text
+    function displayChunks() {
+        textContainer.textContent = originalText;
+    }
+
+    // Display only 4 choices: 1 correct and 3 random incorrect ones
+    function displayChoices() {
+        choicesContainer.innerHTML = '';
+
+        if (currentIndex >= correctChunks.length) {
+            return; // No more chunks to display
+        }
+
+        const correctChunk = correctChunks[currentIndex];
+        const incorrectChunks = shuffle(chunks.filter(chunk => chunk !== correctChunk)).slice(0, 3);
+        const allChoices = shuffle([correctChunk, ...incorrectChunks]);
+
+        allChoices.forEach(chunk => {
+            const choiceElement = createChoiceElement(chunk);
+            choicesContainer.appendChild(choiceElement);
+        });
+    }
+
+    // Create a choice element with event listeners
+    function createChoiceElement(chunk) {
+        const choiceElement = document.createElement('div');
+        choiceElement.classList.add('choice');
+        choiceElement.textContent = chunk;
+
+        choiceElement.addEventListener('click', function () {
+            if (!exerciseCompleted && chunk === correctChunks[currentIndex]) {
+                // Correct choice
+                droppedChunks.push(chunk);
+                currentIndex++;
+                displayDroppedChunks();
+
+                if (currentIndex >= correctChunks.length) {
+                    exerciseCompleted = true;
+                    alert('Congratulations! You completed the exercise.');
+                    resetExercise();
+                } else {
+                    displayChoices();
+                }
+            } else {
+                // Incorrect choice
+                choiceElement.style.display = 'none';
+            }
+        });
+
+        return choiceElement;
+    }
+
+    // Display dropped chunks in the dropbox container
+    function displayDroppedChunks() {
+        dropboxContainer.innerHTML = '';
+        droppedChunks.forEach(chunk => {
+            const droppedChunkElement = document.createElement('div');
+            droppedChunkElement.classList.add('dropped-chunk');
+            droppedChunkElement.textContent = chunk;
+            dropboxContainer.appendChild(droppedChunkElement);
+        });
+    }
+
+    // Shuffle an array randomly
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Function to reset the exercise
+    function resetExercise() {
+        exerciseCompleted = false;
+        correctChunks = [];
+        droppedChunks = [];
+        currentIndex = 0;
+        resetBtn.style.display = 'inline-block';
+        generateBtn.style.display = 'none';
+        
+        // Create feedback message element
+        const feedbackMessage = document.createElement('div');
+        feedbackMessage.textContent = 'Exercise completed. Press the reset button to enter a new text.';
+        dropboxContainer.appendChild(feedbackMessage);
+        
+        // Hide the input textbox and its copy text
+        textInput.style.display = 'none';
+        textContainer.style.display = 'none';
+
+        // Hide the choices container
+        choicesContainer.style.display = 'none';
+    }
+
+    // Event listener for "Generate Exercise" button
+    generateBtn.addEventListener('click', function() {
+        originalText = textInput.value;
+        const chunkLength = parseInt(chunkLengthSelect.value);
+        if (originalText.trim() === '') {
+            alert('Please enter some text.');
+            return;
+        }
+        generateChunks(originalText, chunkLength);
+        correctChunks = [...chunks];
+        droppedChunks = [];
+        currentIndex = 0;
+        displayChunks();
+        displayChoices(); // Call displayChoices() after displayChunks()
+
+        // Hide the input textbox and its copy text
+        textInput.style.display = 'none';
+        textContainer.style.display = 'none';
+        // Hide the subtitle
+    const subtitle = document.getElementById('subtitle');
+    subtitle.style.display = 'none';
+    });
+
+    // Event listener for "Reset" button
+    resetBtn.addEventListener('click', function() {
+        resetBtn.style.display = 'none';
+        generateBtn.style.display = 'inline-block';
+         generateBtn.disabled = false; // Enable the generate button
+        // Show the input textbox
+        textInput.style.display = 'block';
+        textContainer.style.display = 'block';
+        textInput.value = '';
+        textContainer.textContent = '';
+        choicesContainer.innerHTML = '';
+        dropboxContainer.innerHTML = '';
+        correctChunks = [];
+        droppedChunks = [];
+        currentIndex = 0;
+
+        // Show the choices container
+        choicesContainer.style.display = 'block';
+    });
+});
+    </script>
+</body>
+</html>
