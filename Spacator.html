@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spacator</title>
+  <style>
+    .container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .exercise-boxGame9 {
+      margin: 20px 0;
+      font-size: 20px;
+      white-space: pre-wrap;
+      text-align: justify;
+      cursor: text;
+    }
+
+    #frenchText {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .hidden-space {
+      display: inline-block;
+      width: 1px;
+      height: 1em;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .revealed-space {
+      display: inline;
+      width: auto;
+    }
+
+    .highlighted {
+      color: red;
+    }
+
+    .feedbackGame9 {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .correct-clickGame9 {
+      color: green;
+    }
+
+    .wrong-clickGame9 {
+      color: red;
+    }
+
+    /* Print styles */
+    @media print {
+      .ruled-lines {
+        display: block !important;
+      }
+
+      .ruled-line {
+        display: block;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+        height: 20px;
+      }
+
+      #generatebtnGame9,
+      #resetbtn,
+      .wrong-clickGame9 {
+        display: none !important;
+      }
+
+      .feedbackGame9 {
+        display: none !important;
+      }
+
+      /* Subtitle visible only in print preview */
+      .print-subtitle {
+        display: block !important;
+      }
+    }
+
+    @media screen {
+      .ruled-lines {
+        display: none;
+      }
+      
+      /* Hide subtitle in screen view */
+      .print-subtitle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body onload="initializeGame9()">
+  <div class="container">
+     <button id="homeButton" onclick="goHome()">Home</button>
+    <h1>Spacator</h1>
+
+    <!-- Subtitle visible only in print -->
+    <p class="print-subtitle">Rewrite the text, adding the missing spaces between the words.</p>
+
+    <p id="subtitle">Enter your text below. Click to insert spaces and recreate the correct text.</p>
+
+    <!-- Text input box -->
+    <textarea id="frenchText" placeholder="Type your French text here..."></textarea>
+    <button id="generatebtnGame9">Generate Exercise</button>
+
+    <!-- Exercise container -->
+    <div id="exercise-containerGame9" style="display: none;">
+      <div class="exercise-boxGame9" id="exercise-frenchTextGame9"></div>
+      <div class="feedbackGame9" id="feedbackGame9"></div>
+
+      <div id="counterGame9" class="feedbackGame9" style="display: inline-block;"></div>
+      <div id="wrongClickCounter" class="feedbackGame9" style="display: inline-block; margin-left: 20px;"></div>
+      <button id="resetbtn" style="margin-left: 20px; display: inline-block;">Reset</button>
+    </div>
+
+       <!-- Ruled lines for writing -->
+    <div class="ruled-lines print-only">
+      <!-- Add ruled lines for writing -->
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      <div class="ruled-line"></div>
+      </div>
+<script>
+  let hiddenSpacesCount = 0;
+  let wrongClicksCount = 0;
+
+  function initializeGame9() {
+    const generateButton = document.getElementById('generatebtnGame9');
+    const resetButton = document.getElementById('resetbtn');
+
+    generateButton.addEventListener('click', generateExerciseGame9);
+    resetButton.addEventListener('click', resetGame);
+  }
+
+  function generateExerciseGame9() {
+    const frenchText = document.getElementById('frenchText').value.trim();
+    const exerciseContainer = document.getElementById('exercise-containerGame9');
+    const exerciseOutput = document.getElementById('exercise-frenchTextGame9');
+    const feedback = document.getElementById('feedbackGame9');
+    const counter = document.getElementById('counterGame9');
+    const wrongCounter = document.getElementById('wrongClickCounter');
+    const inputBox = document.getElementById('frenchText');
+    const subtitle = document.getElementById('subtitle');
+    const generateButton = document.getElementById('generatebtnGame9');
+    const resetButton = document.getElementById('resetbtn');
+
+    if (!frenchText) {
+      feedback.textContent = 'Please enter some text to generate the exercise.';
+      feedback.classList.add('wrong-clickGame9');
+      return;
+    }
+
+    inputBox.style.display = 'none';
+    subtitle.style.display = 'none';
+    generateButton.style.display = 'none';
+    resetButton.style.display = 'inline-block';
+
+    hiddenSpacesCount = 0;
+    wrongClicksCount = 0;
+    feedback.textContent = '';
+    counter.textContent = '';
+    wrongCounter.textContent = '';
+
+    const punctuationMarks = ['.', ',', '!', '?', ':', ';', '-', '(', ')', '"', "'"];
+    const htmlContent = frenchText.split('').map((char, index) => {
+      if (char === ' ' &&
+          !punctuationMarks.includes(frenchText[index - 1]) &&
+          !punctuationMarks.includes(frenchText[index + 1])) {
+        hiddenSpacesCount++;
+        return `<span class="hidden-space" data-space="true"></span>`;
+      }
+      return `<span>${char}</span>`;
+    }).join('');
+
+    exerciseOutput.innerHTML = htmlContent;
+    counter.textContent = `Spaces remaining: ${hiddenSpacesCount}`;
+    wrongCounter.textContent = `Wrong clicks: ${wrongClicksCount}`;
+    exerciseContainer.style.display = 'block';
+
+    // Reattach the click event listener
+    exerciseOutput.addEventListener('click', handleTextClick);
+  }
+
+  function handleTextClick(event) {
+    const textContainer = document.getElementById('exercise-frenchTextGame9');
+    const clickedNode = document.elementFromPoint(event.clientX, event.clientY);
+
+    if (!textContainer.contains(clickedNode)) return;
+
+    const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+    if (range) {
+      const { startContainer, startOffset } = range;
+      const parentSpan = startContainer.parentNode;
+
+      if (startOffset === startContainer.textContent.length) {
+        const nextSibling = parentSpan.nextSibling;
+        if (nextSibling && nextSibling.classList && nextSibling.classList.contains('hidden-space')) {
+          revealSpace(nextSibling);
+          return;
+        }
+      }
+    }
+
+    countWrongClick(event.target);
+  }
+
+  function revealSpace(spaceElement) {
+    if (!spaceElement || !spaceElement.classList.contains('hidden-space')) return;
+
+    spaceElement.textContent = ' ';
+    spaceElement.classList.remove('hidden-space');
+    spaceElement.classList.add('revealed-space');
+
+    hiddenSpacesCount--;
+    const counter = document.getElementById('counterGame9');
+    counter.textContent = `Spaces remaining: ${hiddenSpacesCount}`;
+
+    if (hiddenSpacesCount === 0) {
+      const feedback = document.getElementById('feedbackGame9');
+      feedback.textContent = 'Congratulations! You found all the spaces.';
+      feedback.classList.add('correct-clickGame9');
+    }
+  }
+
+  function countWrongClick(target) {
+    wrongClicksCount++;
+    const wrongCounter = document.getElementById('wrongClickCounter');
+    wrongCounter.textContent = `Wrong clicks: ${wrongClicksCount}`;
+
+    if (target.tagName === 'SPAN') {
+      target.classList.add('highlighted');
+      setTimeout(() => {
+        target.classList.remove('highlighted');
+      }, 500);
+    }
+  }
+
+  function resetGame() {
+    const inputBox = document.getElementById('frenchText');
+    const subtitle = document.getElementById('subtitle');
+    const generateButton = document.getElementById('generatebtnGame9');
+    const resetButton = document.getElementById('resetbtn');
+    const exerciseContainer = document.getElementById('exercise-containerGame9');
+    const feedback = document.getElementById('feedbackGame9');
+    const counter = document.getElementById('counterGame9');
+    const wrongCounter = document.getElementById('wrongClickCounter');
+    const exerciseOutput = document.getElementById('exercise-frenchTextGame9');
+
+    inputBox.style.display = 'block';
+    subtitle.style.display = 'block';
+    generateButton.style.display = 'inline-block';
+    resetButton.style.display = 'none';
+
+    exerciseContainer.style.display = 'none';
+    feedback.textContent = '';
+    counter.textContent = '';
+    wrongCounter.textContent = '';
+    exerciseOutput.innerHTML = '';
+
+    hiddenSpacesCount = 0;
+    wrongClicksCount = 0;
+  }
+       function goHome() {
+      window.location.href = "https://adaligand.github.io/Textivator/";
+    }
+</script>
+
+</body>
+</html>
