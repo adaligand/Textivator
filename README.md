@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +6,14 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         .menu {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             padding: 20px;
         }
+
         .menu a {
             padding: 15px 25px;
             margin: 10px;
@@ -27,21 +28,31 @@
             cursor: pointer;
             text-align: center;
             box-sizing: border-box;
-            width: 20%; /* Ensures only 4 buttons per row with some space between */
+            width: 100%; /* Full width on small screens */
             text-align: center;
         }
+
         .menu a:hover {
             background-color: #A9A9A9;
             transform: translateY(-4px);
         }
+
         .menu a:active {
             background-color: #004080;
         }
+
         .subtitle {
             display: block;
             font-weight: normal;
             font-size: 14px;
             color: #666;
+        }
+
+        /* Media Query for larger screens */
+        @media (min-width: 600px) {
+            .menu a {
+                width: 20%; /* 4 buttons per row on larger screens */
+            }
         }
     </style>
 </head>
