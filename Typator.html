@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Exercise</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            font-size: 18px;
+            text-align: center;
+        }
+   button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        input[type="text"] {
+            width: 80%;
+            height: 45px;
+            padding: 5px;
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        #displayText {
+            font-size: 24px;
+            font-weight: bold;
+        }
+       
+        #feedback {
+            font-weight: bold;
+            display: inline-block;
+        }
+        #resetButton {
+            padding: 10px 20px;
+            height: 45px;
+            font-size: 16px;
+            background-color: #10148;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        #languageSelect {
+            width: 13%;
+            padding: 5px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            height: 35px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .virtual-keyboard {
+            display: inline-block;
+            vertical-align: top;
+        }
+        .virtual-keyboard button {
+            font-size: 18px;
+            padding: 10px 15px;
+            margin: 2px;
+            border: none;
+            border-radius: 10px;
+            background-color: #10148; /* Medium dark grey background */
+            color: #000000; /* White text */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow for volume */
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .button-container {
+            margin-top: 10px;
+        }
+        select, button {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Button placed outside the container -->
+<button id="homeButton" onclick="goHome()">Home</button>
+
+<!-- The container with all the main content -->
+<div class="container">
+    <h1>Typator</h1>
+    <br>
+         <div class="subtitle" id="subtitle">The next three words : Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
+    <!-- Exercise display and input -->
+    <div id="exerciseContainer" style="display: none;">
+        <p id="displayText"></p>
+        <input type="text" id="userInput" placeholder="Type the next three words" autocomplete="off" spellcheck="false">
+        <button id="checkButton">Check</button>
+        <p id="feedback"></p>
+        <button id="resetButton" style="display: none;">Reset Exercise</button>
+    </div>
+    <br><br>
+    <!-- Text input area -->
+    <div>
+        <textarea id="textInput" placeholder="Enter your text here"></textarea>
+    </div>
+    <br><br>
+    <!-- Generate button and language selection -->
+    <div class="button-container">
+        <select id="languageSelect">
+            <option value="french" selected>French</option>
+            <option value="german">German</option>
+            <option value="spanish">Spanish</option>
+        </select>
+        <button id="generateButton">Generate Exercise</button>
+        <button id="resetButton" style="display: none;">Reset Exercise</button>
+    </div>
+    <!-- Virtual Keyboard buttons -->
+    <div class="virtual-keyboard" id="virtualKeyboardFrench">
+        <button onclick="addCharacter('à')">à</button>
+        <button onclick="addCharacter('â')">â</button>
+        <button onclick="addCharacter('ä')">ä</button>
+        <button onclick="addCharacter('é')">é</button>
+        <button onclick="addCharacter('è')">è</button>
+        <button onclick="addCharacter('ê')">ê</button>
+        <button onclick="addCharacter('ë')">ë</button>
+        <button onclick="addCharacter('î')">î</button>
+        <button onclick="addCharacter('ï')">ï</button>
+        <button onclick="addCharacter('ô')">ô</button>
+        <button onclick="addCharacter('ö')">ö</button>
+        <button onclick="addCharacter('ù')">ù</button>
+        <button onclick="addCharacter('ü')">ü</button>
+        <button onclick="addCharacter('û')">û</button>
+        <button onclick="addCharacter('ç')">ç</button>
+    </div>
+    <div class="virtual-keyboard" id="virtualKeyboardGerman">
+        <button onclick="addCharacter('ä')">ä</button>
+        <button onclick="addCharacter('ö')">ö</button>
+        <button onclick="addCharacter('ü')">ü</button>
+        <button onclick="addCharacter('ß')">ß</button>
+    </div>
+    <div class="virtual-keyboard" id="virtualKeyboardSpanish">
+        <button onclick="addCharacter('á')">á</button>
+        <button onclick="addCharacter('é')">é</button>
+        <button onclick="addCharacter('í')">í</button>
+        <button onclick="addCharacter('ó')">ó</button>
+        <button onclick="addCharacter('ú')">ú</button>
+        <button onclick="addCharacter('ñ')">ñ</button>
+    </div>
+    <br>
+    <p id="feedback"></p>
+</div>
+
+<script>
+document.getElementById('generateButton').addEventListener('click', generateExercise);
+document.getElementById('checkButton').addEventListener('click', checkInput);
+document.getElementById('resetButton').addEventListener('click', resetExercise);
+
+// Add event listener for language selection
+document.getElementById('languageSelect').addEventListener('change', toggleVirtualKeyboard);
+
+let textArray = [];
+let currentPosition = 0;
+
+function generateExercise() {
+    const textInput = document.getElementById('textInput').value;
+    textArray = textInput.split(' ');
+
+    const displayText = textArray.slice(currentPosition, currentPosition + 3).join(' ');
+    document.getElementById('displayText').textContent = displayText;
+
+    document.getElementById('textInput').style.display = 'none';
+    document.getElementById('generateButton').style.display = 'none';
+    document.getElementById('subtitle').style.display = 'none'; // Hide the subtitle
+
+    document.getElementById('exerciseContainer').style.display = 'block';
+}
+
+function checkInput() {
+    const userInput = document.getElementById('userInput').value;
+    const expectedText = textArray.slice(currentPosition + 3, currentPosition + 6).join(' ');
+
+    if (userInput === expectedText) {
+        currentPosition += 3;
+        const displayText = textArray.slice(currentPosition, currentPosition + 3).join(' ');
+        document.getElementById('displayText').textContent = displayText;
+        document.getElementById('feedback').textContent = 'Correct!';
+        document.getElementById('userInput').value = '';
+    } else {
+        document.getElementById('feedback').textContent = 'Incorrect. Try again.';
+    }
+
+    if (currentPosition >= textArray.length - 3) {
+        document.getElementById('feedback').textContent = 'Congratulations! Exercise completed.';
+        document.getElementById('userInput').setAttribute('disabled', 'disabled');
+        document.getElementById('checkButton').setAttribute('disabled', 'disabled');
+        document.getElementById('resetButton').style.display = 'inline-block'; // Show the reset button
+    }
+}
+
+function resetExercise() {
+    currentPosition = 0;
+    document.getElementById('textInput').value = '';
+    document.getElementById('textInput').style.display = 'block';
+    document.getElementById('generateButton').style.display = 'inline-block';
+    document.getElementById('checkButton').classList.add('hidden'); // Hide the "Check" button
+    document.getElementById('exerciseContainer').style.display = 'none';
+    document.getElementById('resetButton').style.display = 'none';
+    document.getElementById('subtitle').style.display = 'block'; // Hide the subtitle
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('userInput').value = '';
+    document.getElementById('userInput').removeAttribute('disabled');
+    document.getElementById('checkButton').removeAttribute('disabled');
+}
+
+function addCharacter(character) {
+    document.getElementById('userInput').value += character;
+}
+
+document.getElementById('languageSelect').addEventListener('change', toggleVirtualKeyboard);
+
+function toggleVirtualKeyboard() {
+    const selectedLanguage = document.getElementById('languageSelect').value;
+    const virtualKeyboards = document.querySelectorAll('.virtual-keyboard');
+
+    virtualKeyboards.forEach(keyboard => {
+        if (keyboard.id === `virtualKeyboard${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}`) {
+            keyboard.style.display = 'block';
+        } else {
+            keyboard.style.display = 'none';
+        }
+    });
+}
+     
+// Call toggleVirtualKeyboard once to ensure the French keyboard is displayed by default
+toggleVirtualKeyboard();
+function goHome() {
+      window.location.href = "https://adaligand.github.io/Textivator/";
+    }
+    </script>
+</body>
+</html>
