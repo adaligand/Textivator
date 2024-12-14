@@ -50,6 +50,7 @@
         <a href="https://adaligand.github.io/Textivator/Consonator.html">Consonator</a>
         <a href="https://adaligand.github.io/Textivator/Lettrator.html">Lettrator</a>
         <a href="https://adaligand.github.io/Textivator/Tanglator.html">Tanglator</a>
+        <a href="https://adaligand.github.io/Textivator/Punctuator.html">Punctuator</a>
     </div>
 
 </body>
