@@ -10,7 +10,7 @@
         .menu {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-content: space-between;
             padding: 20px;
         }
         .menu a {
@@ -21,12 +21,13 @@
             transition: background-color 0.3s;
             display: inline-block;
             text-decoration: none;
-            color: #fff;
-      background-color: #f9f9f9;
-      border: 2px solid #ccc;
-      color: #000000;
-      border-radius: 10px;
-      cursor: pointer;
+            color: #000000;
+            background-color: #f9f9f9;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            text-align: center;
+            box-sizing: border-box;
+            width: 23%; /* Ensures only 4 buttons per row with some space between */
         }
         .menu a:hover {
             background-color: #A9A9A9;
@@ -35,7 +36,6 @@
         .menu a:active {
             background-color: #004080;
         }
-        
     </style>
 </head>
 <body>
@@ -45,7 +45,6 @@
         <a href="https://adaligand.github.io/Textivator/Gapfillator.html">Gapfillator</a>
         <a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor</a>
         <a href="https://adaligand.github.io/Textivator/Chunkator.html">Chunkator</a>
-        <p></p>
         <a href="https://adaligand.github.io/Textivator/Spacator.html">Spacator</a>
         <a href="https://adaligand.github.io/Textivator/Vowelator.html">Vowelator</a>
         <a href="https://adaligand.github.io/Textivator/Consonator.html">Consonator</a>
