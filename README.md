@@ -31,6 +31,7 @@
             box-sizing: border-box;
             width: 100%; /* Full width on small screens */
             text-align: center;
+            font-size: 16px; /* Adjust font size for better fit */
         }
 
         .menu a:hover {
@@ -39,7 +40,7 @@
         }
 
         .menu a:active {
-            background-color: #A9A9A9;
+            background-color: #004080;
         }
 
         .subtitle {
@@ -53,6 +54,24 @@
         @media (min-width: 600px) {
             .menu a {
                 width: 20%; /* 4 buttons per row on larger screens */
+                font-size: 18px;
+            }
+        }
+
+        /* Media Query for tablets and smaller phones */
+        @media (max-width: 400px) {
+            .menu a {
+                font-size: 14px; /* Reduce font size on very small screens */
+                padding: 10px 15px;
+            }
+        }
+
+        /* Media Query for mobile (2 buttons per row) */
+        @media (min-width: 300px) and (max-width: 600px) {
+            .menu a {
+                width: 48%; /* Approximately 2 buttons per row with a bit of space */
+                font-size: 15px;
+                padding: 12px;
             }
         }
     </style>
