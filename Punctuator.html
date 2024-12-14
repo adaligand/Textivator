@@ -114,6 +114,7 @@ h1 {
 </head>
 
 <body onload="initializeGame9()">
+     <button id="homeButton" onclick="goHome()">Home</button>
   <div id="content">
  <h1>Punctuator</h1>
  <h1 id="print-title" class="hidden-title">Punctuation</h1>
@@ -226,4 +227,7 @@ h1 {
     feedback.textContent = '';
     hiddenPunctuationCount = 0;
   }
+      function goHome() {
+      window.location.href = "https://adaligand.github.io/Textivator/";
+    }
 </script>
