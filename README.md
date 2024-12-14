@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,9 +49,9 @@
         }
 
         /* Media Query for screens up to 600px */
-        @media (max-width: 600px) {
+        @media (max-width: 320px) {
             .menu a {
-                width: 48%; /* 2 buttons per row */
+                width: 45%; /* 2 buttons per row */
                 font-size: 15px;
                 padding: 12px;
                 box-sizing: border-box;
