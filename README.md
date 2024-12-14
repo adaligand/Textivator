@@ -35,8 +35,6 @@
 </head>
 <body>
 
-    <h1 style="text-align:center;">Textivator Menu</h1>
-
     <div class="menu">
         <a href="https://adaligand.github.io/Textivator/Dragator.html">Dragator</a>
         <a href="https://adaligand.github.io/Textivator/Gapfillator.html">Gapfillator</a>
