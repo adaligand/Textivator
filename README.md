@@ -43,7 +43,7 @@
     <div class="menu">
         <a href="https://adaligand.github.io/Textivator/Dragator.html">Dragator</a>
         <a href="https://adaligand.github.io/Textivator/Gapfillator.html">Gapfillator</a>
-        <a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor (not printable)</a>
+        <a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor</a>
         <a href="https://adaligand.github.io/Textivator/Chunkator.html">Chunkator</a>
         <a href="https://adaligand.github.io/Textivator/Spacator.html">Spacator</a>
         <a href="https://adaligand.github.io/Textivator/Vowelator.html">Vowelator</a>
