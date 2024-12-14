@@ -95,7 +95,20 @@
       background-color: #A9A9A9; /* Slightly darker grey background on hover */
       transform: translateY(-4px); /* Add slight lift effect on hover */
     }
-    
+    #footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+   text-align: center;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
     @media screen {
       .print-title-container {
         display: none;
@@ -139,6 +152,13 @@
         padding: 0 !important;
       }
     }
+    #footer {
+    position: relative;
+    box-shadow: none;
+    background-color: transparent;
+    font-weight: bold;
+  }
+}
   </style>
 </head>
 <body onload="initialize()">
@@ -169,7 +189,10 @@
     <button class="keyboard-button" onclick="insertLetter('ñ')">ñ</button>
     <button class="keyboard-button" onclick="insertLetter('ß')">ß</button>
   </div>
-
+<!-- Footer at the bottom -->
+<div id="footer">
+  <span>️🌍 A Daligand</span>
+</div>
   <script>
     var focusedInput; // Variable to keep track of the currently focused input element
   var correctAnswers = 0; // Variable to keep track of the correct answers
