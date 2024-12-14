@@ -51,6 +51,7 @@
         <a href="https://adaligand.github.io/Textivator/Lettrator.html">Lettrator</a>
         <a href="https://adaligand.github.io/Textivator/Tanglator.html">Tanglator</a>
         <a href="https://adaligand.github.io/Textivator/Punctuator.html">Punctuator</a>
+        <a href="https://adaligand.github.io/Textivator/Typator.html">Typator</a>
     </div>
 
 </body>
