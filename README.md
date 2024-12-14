@@ -45,6 +45,7 @@
         <a href="https://adaligand.github.io/Textivator/Gapfillator.html">Gapfillator</a>
         <a href="https://adaligand.github.io/Textivator/Pyramidor.html">Pyramidor</a>
         <a href="https://adaligand.github.io/Textivator/Chunkator.html">Chunkator</a>
+        <p></p>
         <a href="https://adaligand.github.io/Textivator/Spacator.html">Spacator</a>
         <a href="https://adaligand.github.io/Textivator/Vowelator.html">Vowelator</a>
         <a href="https://adaligand.github.io/Textivator/Consonator.html">Consonator</a>
