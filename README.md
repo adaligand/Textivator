@@ -27,7 +27,7 @@
             cursor: pointer;
             text-align: center;
             box-sizing: border-box;
-            width: 23%; /* Ensures only 4 buttons per row with some space between */
+            width: 20%; /* Ensures only 4 buttons per row with some space between */
         }
         .menu a:hover {
             background-color: #A9A9A9;
