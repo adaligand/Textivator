@@ -49,6 +49,7 @@
         <a href="https://adaligand.github.io/Textivator/Vowelator.html">Vowelator</a>
         <a href="https://adaligand.github.io/Textivator/Consonator.html">Consonator</a>
         <a href="https://adaligand.github.io/Textivator/Lettrator.html">Lettrator</a>
+        <a href="https://adaligand.github.io/Textivator/Tanglator.html">Tanglator</a>
     </div>
 
 </body>
