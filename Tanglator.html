@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tanglator</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #A9A9A9;
+      transform: translateY(-4px);
+    }
+
+    .hide {
+      display: none;
+    }
+
+    #exerciseOutput {
+      font-size: 20px;
+      line-height: 2;
+      text-align: justify;
+      word-spacing: 0.5em;
+      margin-top: 20px;
+    }
+
+    /* Print Styles */
+   @media print {
+  textarea,
+  button {
+    display: none !important;
+  }
+
+  .title {
+    display: none !important;
+  }
+.subtitle {
+    display: none !important;
+  }
+  .print-title {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+    width: 100%;
+  }
+
+  .print-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .column {
+    padding: 10px;
+    box-sizing: border-box;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+
+    /* Prevent content from splitting across pages */
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .ruled-lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    height: 100%;
+  }
+
+  .ruled-line {
+    width: 100%;
+    border-bottom: 1px solid #000;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .column .headline,
+  .print-title {
+    display: block !important;
+  }
+
+  /* Ensure no extra blank pages */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    padding: 0;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <button id="homeButton" onclick="goHome()">Home</button>
+    <div class="title">Tanglator</div>
+<div class="subtitle" id="subtitle">Enter your texts in both languages. Add / to separate your chunks.</div>
+<br>
+    <!-- Text input for English and French -->
+    <textarea id="englishInput" placeholder="Enter your English text here..."></textarea>
+    <textarea id="frenchInput" placeholder="Enter your French text here..."></textarea>
+
+    <!-- Button to Generate Output -->
+    <button onclick="generateExercise()">Generate Exercise</button>
+
+    <button id="resetButton" class="hide" onclick="resetExercise()">Reset</button>
+
+    <!-- Generated Output -->
+    <div id="exerciseOutput" class="hide"></div>
+    <div id="print-title" class="print-title hide"></div>
+  </div>
+
+  <script>
+    function generateExercise() {
+      const englishInput = document.getElementById('englishInput').value;
+      const frenchInput = document.getElementById('frenchInput').value;
+      const exerciseOutput = document.getElementById('exerciseOutput');
+
+      const englishChunks = getChunks(englishInput);
+      const frenchChunks = getChunks(frenchInput);
+
+      let outputHtml = `
+        <div id="print-title" class="print-title">
+          Tangled Translation
+        </div>
+
+        <div class="print-columns">
+         
+          <!-- Column 1: French Ruled Lines -->
+          <div class="column">
+            <div class="headline hide">French</div>
+            ${generateRuledLines(frenchChunks.length)}
+          </div>
+
+          <!-- Column 2: Generated Text -->
+          <div class="column">
+            ${generateTextOutput(frenchChunks, englishChunks)}
+          </div>
+
+          <!-- Column 3: English Ruled Lines -->
+          <div class="column">
+            <div class="headline hide">English</div>
+            ${generateRuledLines(englishChunks.length)}
+          </div>
+
+        </div>
+      `;
+
+      exerciseOutput.innerHTML = outputHtml;
+      exerciseOutput.classList.remove('hide');
+      document.getElementById('resetButton').classList.remove('hide');
+    }
+
+    function getChunks(inputText) {
+      return inputText.split('/').map(chunk => chunk.trim()).filter(chunk => chunk.length > 0);
+    }
+
+    function resetExercise() {
+      document.getElementById('englishInput').value = '';
+      document.getElementById('frenchInput').value = '';
+      document.getElementById('exerciseOutput').innerHTML = '';
+      document.getElementById('exerciseOutput').classList.add('hide');
+      document.getElementById('resetButton').classList.add('hide');
+    }
+
+    function generateRuledLines(chunkCount) {
+      const lineHeight = 35; 
+      const columnHeight = 800; 
+      const totalLines = Math.floor(columnHeight / lineHeight);
+      let lines = '';
+      for (let i = 0; i < Math.max(chunkCount, totalLines); i++) {
+        lines += `<div class="ruled-line"></div>`;
+      }
+      return lines;
+    }
+
+    function generateTextOutput(frenchChunks, englishChunks) {
+      let output = '';
+      for (let i = 0; i < Math.max(frenchChunks.length, englishChunks.length); i++) {
+        if (i % 2 === 0) {
+          output += `${frenchChunks[i] || ''} `;
+        } else {
+          output += `${englishChunks[i] || ''} `;
+        }
+      }
+      return output;
+    }
+          function goHome() {
+      window.location.href = "https://adaligand.github.io/Textivator/";
+    }
+  </script>
+</body>
+</html>
