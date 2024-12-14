@@ -112,7 +112,20 @@ select {
   text-align: center;
   margin-bottom: 20px; /* Adjust margin as needed */
 }
-
+  #footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+   text-align: center;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
 @media print {
   .title {
     display: none; /* Hide the title in print */
@@ -218,6 +231,13 @@ select {
     display: none;
   }
 }
+ #footer {
+    position: relative;
+    box-shadow: none;
+    background-color: transparent;
+    font-weight: bold;
+  }
+}
   </style>
 </head>
 <body onload="initialize()">
@@ -245,6 +265,10 @@ select {
       <div id="feedback" class="hide"></div>
     </div>
   </div>
+  <!-- Footer at the bottom -->
+<div id="footer">
+  <span>️🌍 A Daligand</span>
+</div>
   <script>
     var removedWordSet = new Set();
 
