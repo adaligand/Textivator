@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -230,24 +231,28 @@
   }
 
   function handleTextClick(event) {
-    const textContainer = document.getElementById('exercise-frenchTextGame9');
-    const clickedNode = document.elementFromPoint(event.clientX, event.clientY);
+  const textContainer = document.getElementById('exercise-frenchTextGame9');
+  const clickedNode = document.elementFromPoint(event.clientX, event.clientY);
 
-    if (!textContainer.contains(clickedNode)) return;
+  if (!textContainer.contains(clickedNode)) return;
 
-    const range = document.caretRangeFromPoint(event.clientX, event.clientY);
-    if (range) {
-      const { startContainer, startOffset } = range;
-      const parentSpan = startContainer.parentNode;
+  const spaceElements = document.getElementsByClassName('hidden-space');
 
-      if (startOffset === startContainer.textContent.length) {
-        const nextSibling = parentSpan.nextSibling;
-        if (nextSibling && nextSibling.classList && nextSibling.classList.contains('hidden-space')) {
-          revealSpace(nextSibling);
-          return;
-        }
-      }
+  for (let spaceElement of spaceElements) {
+    const rect = spaceElement.getBoundingClientRect();
+
+    // Check if the click is within 5 pixels of the hidden space element's bounds
+    if (
+      event.clientX >= rect.left - 7 &&
+      event.clientX <= rect.right + 7 &&
+      event.clientY >= rect.top - 5 &&
+      event.clientY <= rect.bottom + 5
+    ) {
+      revealSpace(spaceElement);
+      return;
     }
+  }
+
 
     countWrongClick(event.target);
   }
