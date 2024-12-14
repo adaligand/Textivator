@@ -54,78 +54,72 @@
       margin-top: 20px;
     }
 
-    /* Print Styles */
-   @media print {
-  textarea,
-  button {
-    display: none !important;
-  }
+    @media print {
+      textarea, button {
+        display: none !important;
+      }
 
-  .title {
-    display: none !important;
-  }
-.subtitle {
-    display: none !important;
-  }
-  .print-title {
-    font-size: 26px;
-    font-weight: bold;
-    text-align: center;
-    margin: 20px 0;
-    width: 100%;
-  }
+      .title {
+        display: none !important;
+      }
 
-  .print-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
+      .subtitle {
+        display: none !important;
+      }
 
-  .column {
-    padding: 10px;
-    box-sizing: border-box;
-    height: 80vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
+      .print-title {
+        font-size: 26px;
+        font-weight: bold;
+        text-align: center;
+        margin: 20px 0;
+        width: 100%;
+      }
 
-    /* Prevent content from splitting across pages */
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
+      .print-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
 
-  .ruled-lines {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    height: 100%;
-  }
+      .column {
+        padding: 5px;
+        box-sizing: border-box;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
 
-  .ruled-line {
-    width: 100%;
-    border-bottom: 1px solid #000;
-    flex-grow: 1;
-    margin: 0;
-  }
+        /* Align content from the top */
+        align-items: flex-start;
 
-  .column .headline,
-  .print-title {
-    display: block !important;
-  }
+        /* Prevent content from splitting across pages */
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
 
-  /* Ensure no extra blank pages */
-  body {
-    margin: 0;
-    padding: 0;
-  }
+      .ruled-lines {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+      }
 
-  .container {
-    padding: 0;
-  }
-}
+      .ruled-line {
+        width: 100%;
+        border-bottom: 1px solid #000;
+        margin: 0;
+      }
 
+      .column .headline,
+      .print-title {
+        display: block !important;
+        font-weight: bold;
+        font-size: 18px;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 
@@ -133,8 +127,9 @@
   <div class="container">
     <button id="homeButton" onclick="goHome()">Home</button>
     <div class="title">Tanglator</div>
-<div class="subtitle" id="subtitle">Enter your texts in both languages. Add / to separate your chunks.</div>
-<br>
+
+    <br>
+
     <!-- Text input for English and French -->
     <textarea id="englishInput" placeholder="Enter your English text here..."></textarea>
     <textarea id="frenchInput" placeholder="Enter your French text here..."></textarea>
@@ -164,10 +159,9 @@
         </div>
 
         <div class="print-columns">
-         
           <!-- Column 1: French Ruled Lines -->
           <div class="column">
-            <div class="headline hide">French</div>
+            <div class="headline">French</div>
             ${generateRuledLines(frenchChunks.length)}
           </div>
 
@@ -178,10 +172,9 @@
 
           <!-- Column 3: English Ruled Lines -->
           <div class="column">
-            <div class="headline hide">English</div>
+            <div class="headline">English</div>
             ${generateRuledLines(englishChunks.length)}
           </div>
-
         </div>
       `;
 
@@ -203,11 +196,8 @@
     }
 
     function generateRuledLines(chunkCount) {
-      const lineHeight = 35; 
-      const columnHeight = 800; 
-      const totalLines = Math.floor(columnHeight / lineHeight);
       let lines = '';
-      for (let i = 0; i < Math.max(chunkCount, totalLines); i++) {
+      for (let i = 0; i < chunkCount; i++) {
         lines += `<div class="ruled-line"></div>`;
       }
       return lines;
@@ -224,7 +214,8 @@
       }
       return output;
     }
-          function goHome() {
+
+    function goHome() {
       window.location.href = "https://adaligand.github.io/Textivator/";
     }
   </script>
