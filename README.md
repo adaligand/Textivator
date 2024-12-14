@@ -12,3 +12,4 @@
   <p>
   <a href="https://adaligand.github.io/Textivator/Letrator.html">Letrator
   <p>
+<a href="https://adaligand.github.io/Textivator/Spacator.html">Spacator
