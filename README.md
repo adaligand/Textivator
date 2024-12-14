@@ -50,11 +50,11 @@
     <div class="menu">
         <a href="https://adaligand.github.io/Textivator/Dragator.html">
             Dragator
-            <span class="subtitle">screen + print</span>
+            <span class="subtitle">Screen + print</span>
         </a>
         <a href="https://adaligand.github.io/Textivator/Gapfillator.html">
             Gapfillator
-            <span class="subtitle">screen + print</span>
+            <span class="subtitle">Screen + print</span>
         </a>
         <a href="https://adaligand.github.io/Textivator/Pyramidor.html">
             Pyramidor
@@ -62,7 +62,7 @@
         </a>
         <a href="https://adaligand.github.io/Textivator/Chunkator.html">
             Chunkator
-            <span class="subtitle">screen + print</span>
+            <span class="subtitle">Screen + print</span>
         </a>
         <a href="https://adaligand.github.io/Textivator/Spacator.html">
             Spacator
@@ -74,11 +74,11 @@
         </a>
         <a href="https://adaligand.github.io/Textivator/Consonator.html">
             Consonator
-            <span class="subtitle">screen + print</span>
+            <span class="subtitle">Screen + print</span>
         </a>
         <a href="https://adaligand.github.io/Textivator/Lettrator.html">
             Lettrator
-            <span class="subtitle">screen + print</span>
+            <span class="subtitle">Screen + print</span>
         </a>
         <a href="https://adaligand.github.io/Textivator/Tanglator.html">
             Tanglator
