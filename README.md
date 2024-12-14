@@ -51,7 +51,7 @@
         /* Media Query for screens up to 600px */
         @media (max-width: 600px) {
             .menu a {
-                width: 35%; /* 2 buttons per row */
+                width: 40%; /* 2 buttons per row */
                 font-size: 15px;
                 padding: 12px;
                 box-sizing: border-box;
