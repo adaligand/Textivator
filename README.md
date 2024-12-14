@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +30,6 @@
             cursor: pointer;
             text-align: center;
             box-sizing: border-box;
-            text-align: center;
             font-size: 16px;
         }
 
@@ -49,8 +49,8 @@
             color: #666;
         }
 
-        /* Media Query for screens between 300px and 600px */
-        @media (min-width: 300px) and (max-width: 600px) {
+        /* Media Query for screens up to 600px */
+        @media (max-width: 600px) {
             .menu a {
                 width: 48%; /* 2 buttons per row */
                 font-size: 15px;
@@ -59,8 +59,8 @@
             }
         }
 
-        /* Media Query for larger screens */
-        @media (min-width: 600px) {
+        /* Media Query for screens larger than 600px */
+        @media (min-width: 601px) {
             .menu a {
                 width: 20%; /* 4 buttons per row on larger screens */
             }
