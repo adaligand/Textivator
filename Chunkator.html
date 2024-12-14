@@ -92,6 +92,20 @@ select {
   margin-bottom: 10px;
   height: 35px;
 }
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+   text-align: center;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
 @media print {
     
   /* Hide the Chunkator and Jumble the Words titles in print */
@@ -160,7 +174,14 @@ select {
     margin-bottom: 10px;
     height: 20px;
   }
- }
+ 
+  #footer {
+    position: relative;
+    box-shadow: none;
+    background-color: transparent;
+    font-weight: bold;
+  }
+}
 
 @media screen {
   /* Show print title only on print preview */
@@ -219,6 +240,10 @@ select {
       <div class="ruled-line"></div>
     </div>
   </div>
+<!-- Footer at the bottom -->
+<div id="footer">
+  <span>️🌍 A Daligand</span>
+</div>
 
   <script>
     function initialize() {
