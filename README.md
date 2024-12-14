@@ -39,7 +39,7 @@
         }
 
         .menu a:active {
-            background-color: #004080;
+            background-color: #A9A9A9;
         }
 
         .subtitle {
