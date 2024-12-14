@@ -134,27 +134,46 @@
   margin-bottom: 10px;
   }
 
-    /* Styles for printing */
-    @media print {
-  /* Hide all elements outside the embedded code during printing */
-  body > :not(.container),
-  body > :not(.container) * {
+@media print {
+  /* Hide all elements except the container and footer */
+  body > * {
     display: none !important;
   }
-  /* Show the relevant container during printing */
-  .container {
+
+  .container, #footer {
     display: block !important;
   }
- /* Hide the subtitle */
+
+  /* Hide the dropdown menu specifically */
+  select {
+    display: none !important;
+  }
+
+  /* Ensure footer is positioned properly in the printed page */
+  #footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white; /* Add background color for visibility */
+    text-align: center;
+    padding: 10px 0;
+    font-weight: bold;
+    font-size: 12px;
+    color: #333;
+    font-family: Arial, sans-serif;
+    border-top: 1px solid #ccc; /* Optional: Add a border for better separation */
+  }
+
+  .container {
+    padding-bottom: 60px; /* Add space to avoid overlapping the footer */
+  }
+
+  /* Additional print-specific styles */
   .subtitle {
     display: none !important;
   }
-  /* Additional styles for elements within the embedded code */
-  .container {
-    padding: 0 !important;
-  }
 
-  /* Show the screen title */
   .screen-title {
     display: block !important;
     font-size: 16px;
@@ -162,39 +181,18 @@
     text-align: center;
   }
 
-  /* Hide the drop-down menu */
-  select {
-    display: none !important;
-  }
-
-  /* Hide elements not part of the embedded code */
   .keyboard-container,
   button,
   #embeddedPage,
-  .on-screen-title,
-  .keyboard-container {
+  .on-screen-title {
     display: none !important;
   }
 
-  /* Style the print title */
-  .print-title {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-  }
-
-  /* Show the exercise output */
   #exerciseOutput {
     display: block !important;
   }
 }
-#footer {
-    position: relative;
-    box-shadow: none;
-    background-color: transparent;
-    font-weight: bold;
-  }
-}
+
   </style>
 </head>
 <body onload="initialize()">
