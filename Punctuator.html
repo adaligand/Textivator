@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punctuator</title>
+  <style>
+    .exercise-boxGame9 {
+      font-size: 20px;
+      white-space: pre-wrap;
+      text-align: justify;
+      cursor: text;
+    }
+
+    .hidden-space {
+      display: inline-block;
+      width: 0;
+      height: 1em;
+    }
+h1 {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .punctuation-input {
+      width: 20px;
+      font-size: 24px;
+      text-align: center;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      color: #000;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #frenchText {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .correct-clickGame9 {
+      color: green;
+    }
+
+    .hidden {
+      display: none;
+    }
+/* By default, show the original title */
+#print-title {
+  display: none; /* Hidden on screen */
+}
+
+/* For printing */
+@media print {
+  h1 {
+    display: none; /* Hide the on-screen title */
+  }
+
+  #print-title {
+    display: block; /* Show title only when printed */
+    text-align: center;
+  }
+
+  button {
+    display: none !important; /* Hide buttons in print */
+  }
+
+  h1 {
+    content: 'Punctuation'; /* Title changes to Punctuation in print */
+    text-align: center;
+  }
+
+  #subtitle {
+    font-size: 16px;
+    text-align: center;
+    display: block !important;
+    font-weight: normal !important;
+  }
+
+  #exercise-frenchTextGame9 {
+    font-size: 25px;
+    line-height: 2;
+  }
+}
+
+.hidden-on-screen {
+  display: none !important;
+}
+
+#subtitle {
+  text-align: center;
+  font-size: 20px;
+  font-family: Arial;
+  color: #333;
+}
+
+@media screen {
+  #subtitle {
+    display: none !important;
+  }
+}
+
+
+  </style>
+</head>
+
+<body onload="initializeGame9()">
+  <div id="content">
+ <h1>Punctuator</h1>
+ <h1 id="print-title" class="hidden-title">Punctuation</h1>
+<h2 id="subtitle" class="hidden-on-screen">Read the text and add the missing punctuation marks.</h2>
+
+    <!-- Text input to enter the original French text -->
+    <textarea id="frenchText" placeholder="Enter your text here..."></textarea>
+
+    <!-- Button to generate the exercise -->
+    <button id="generatebtnGame9">Generate Exercise</button>
+
+    <!-- Button to reset the game -->
+    <button id="resetbtn" class="hidden" onclick="resetGame()">Reset</button>
+
+    <!-- Container where the exercise content will be displayed -->
+    <div id="exercise-containerGame9" style="display:none">
+      <div id="exercise-frenchTextGame9" class="exercise-boxGame9" onclick="handleTextClick(event)"></div>
+      <div id="feedbackGame9"></div>
+    </div>
+  </div>
+</body>
+
+<script>
+  let hiddenPunctuationCount = 0;
+
+  function initializeGame9() {
+    const generateButton = document.getElementById('generatebtnGame9');
+    generateButton.addEventListener('click', generateExerciseGame9);
+  }
+
+  function generateExerciseGame9() {
+    const frenchText = document.getElementById('frenchText').value.trim();
+    const exerciseContainer = document.getElementById('exercise-containerGame9');
+    const exerciseOutput = document.getElementById('exercise-frenchTextGame9');
+    const feedback = document.getElementById('feedbackGame9');
+    const generateButton = document.getElementById('generatebtnGame9');
+    const resetButton = document.getElementById('resetbtn');
+
+    if (!frenchText) {
+      feedback.textContent = 'Please enter some text to generate the exercise.';
+      return;
+    }
+
+    generateButton.classList.add('hidden');
+    resetButton.classList.remove('hidden');
+
+    const punctuationMarks = ['.', ',', '!', '?', ':', ';', '-', '(', ')', '"', "'"];
+    hiddenPunctuationCount = 0;
+
+    const htmlContent = frenchText.split('').map(char => {
+      if (punctuationMarks.includes(char)) {
+        hiddenPunctuationCount++;
+        return `<span class="hidden-space" data-punct="true"></span>`;
+      }
+      return `<span>${char}</span>`;
+    }).join('');
+
+    exerciseOutput.innerHTML = htmlContent;
+    feedback.textContent = `Punctuation missing: ${hiddenPunctuationCount}`;
+    exerciseContainer.style.display = 'block';
+
+    document.getElementById('frenchText').style.display = 'none';
+  }
+
+  function handleTextClick(event) {
+    const clickedNode = event.target;
+
+    if (clickedNode.classList.contains('hidden-space') && !clickedNode.querySelector('input')) {
+      createInputBox(clickedNode);
+    }
+  }
+
+  function createInputBox(hiddenSpace) {
+    const inputBox = document.createElement('input');
+    inputBox.type = 'text';
+    inputBox.maxLength = 1;
+    inputBox.className = 'punctuation-input';
+
+    hiddenSpace.appendChild(inputBox);
+    inputBox.focus();
+
+    inputBox.addEventListener('input', function() {
+      if (inputBox.value.length === 1) {
+        hiddenPunctuationCount--;
+
+        const feedback = document.getElementById('feedbackGame9');
+        feedback.textContent = `Punctuation missing: ${hiddenPunctuationCount}`;
+
+        if (hiddenPunctuationCount === 0) {
+          feedback.textContent = 'Congratulations! You completed the exercise.';
+        }
+      }
+    });
+  }
+
+  function resetGame() {
+    const generateButton = document.getElementById('generatebtnGame9');
+    const resetButton = document.getElementById('resetbtn');
+    const exerciseContainer = document.getElementById('exercise-containerGame9');
+    const feedback = document.getElementById('feedbackGame9');
+    const exerciseOutput = document.getElementById('exercise-frenchTextGame9');
+    const textArea = document.getElementById('frenchText');
+
+    generateButton.classList.remove('hidden');
+    resetButton.classList.add('hidden');
+    exerciseContainer.style.display = 'none';
+    textArea.style.display = 'block';
+    textArea.value = '';
+    exerciseOutput.innerHTML = '';
+    feedback.textContent = '';
+    hiddenPunctuationCount = 0;
+  }
+</script>
