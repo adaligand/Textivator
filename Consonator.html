@@ -131,7 +131,7 @@
       #embeddedPage,
       .on-screen-title,
       .screen-title,
-      .keyboard-container {
+      .keyboard-container, #subtitle  {
         display: none !important;
       }
 
@@ -162,194 +162,142 @@
   </style>
 </head>
 <body onload="initialize()">
-  <!-- Print title container -->
-  
-  <div class="print-title-container">
+    <div class="print-title-container">
     <div class="print-title">Fill in the text with the missing consonants</div>
   </div>
-
-  <!-- On-screen title container -->
   <div class="container">
     <button id="homeButton" onclick="goHome()">Home</button>
     <div class="on-screen-title">Consonator</div>
     <br><br>
-     <div class="subtitle" id="subtitle">Missing consonants :Type or copy/paste your text and click on Generate exercise.</div>
-    <div class="screen-title">Fill in the text with the missing consonants</div>
-     <br><br>
-    <textarea id="textInput" placeholder="Enter your text here..." oninput="toggleCheckButtonVisibility()"></textarea>
-    <button onclick="generateExercise()">Generate Exercise</button>
-    <button id="checkButton" class="hide" onclick="checkExercise()">Check Exercise</button>
-    <button id="resetButton" class="hide" onclick="resetActivity()">Reset</button>
+    <div id="subtitle">Enter text in both languages and click on Generate exercise.</div>
+   </div>
+   <textarea id="textInput" placeholder="Enter text in French..." oninput="toggleCheckButtonVisibility()"></textarea>
+    <textarea id="englishInput" placeholder="Enter English text here..." oninput="toggleCheckButtonVisibility()"></textarea>
+    <button id="generateButton" onclick="generateExercise()">Generate Exercise</button>
+<button id="resetButton" class="hide" onclick="resetActivity()">Reset</button>
+
     <div id="exerciseOutput" class="hide"></div>
     <div id="feedback" class="hide"></div>
   </div>
-  <!-- Keyboard container -->
-  <div class="keyboard-container">
-    <button class="keyboard-button" onclick="insertLetter('ç')">ç</button>
-    <button class="keyboard-button" onclick="insertLetter('ñ')">ñ</button>
-    <button class="keyboard-button" onclick="insertLetter('ß')">ß</button>
+  <div id="footer">
+    <span>️🌍 A Daligand</span>
   </div>
-<!-- Footer at the bottom -->
-<div id="footer">
-  <span>️🌍 A Daligand</span>
-</div>
-  <script>
-    var focusedInput; // Variable to keep track of the currently focused input element
-  var correctAnswers = 0; // Variable to keep track of the correct answers
+<script>
+  var focusedInput;
+  var correctAnswers = 0;
 
   function initialize() {
     document.getElementById('textInput').value = '';
+    document.getElementById('englishInput').value = '';
   }
 
-  function generateExercise() {
+ function generateExercise() {
+  var textInput = document.getElementById('textInput').value;
+  var englishInput = document.getElementById('englishInput').value;
+  var modifiedText = '';
+
+  // Generate modified text with consonants removed
+  for (var i = 0; i < textInput.length; i++) {
+    var char = textInput[i];
+    if (isConsonant(char)) {
+      modifiedText += `<input type="text" maxlength="1" size="1" value="" data-original="${char}" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event)">`;
+    } else {
+      modifiedText += char;
+    }
+  }
+
+  // Display only the modified text and English text
+  var exerciseOutput = document.getElementById('exerciseOutput');
+  exerciseOutput.innerHTML = `<div>${modifiedText}</div><br><div>${englishInput}</div>`;
+  exerciseOutput.classList.remove('hide');
+
+  // Hide input fields and subtitle
+  document.getElementById('textInput').classList.add('hide');
+  document.getElementById('englishInput').classList.add('hide');
+  document.getElementById('subtitle').classList.add('hide');
+  document.getElementById('generateButton').classList.add('hide');
+  document.getElementById('resetButton').classList.remove('hide');  // Correctly show Reset button
+}
+function resetActivity() {
+  initialize();
+  document.getElementById('exerciseOutput').classList.add('hide');
+  document.getElementById('feedback').classList.add('hide');
+  document.getElementById('textInput').classList.remove('hide');
+  document.getElementById('englishInput').classList.remove('hide');
+  document.getElementById('generateButton').classList.remove('hide');
+  document.getElementById('resetButton').classList.add('hide');
+}
+
+
+function initialize() {
+  document.getElementById('textInput').value = '';
+  document.getElementById('englishInput').value = '';
+  document.getElementById('generateButton').classList.remove('hide');
+  document.getElementById('resetButton').classList.add('hide');
+  document.getElementById('exerciseOutput').classList.add('hide');
+}
+
+
+
+  function toggleCheckButtonVisibility() {
     var textInput = document.getElementById('textInput').value;
-    var modifiedText = '';
-
-    for (var i = 0; i < textInput.length; i++) {
-      var char = textInput[i];
-      if (isConsonant(char)) {
-        modifiedText += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event)" onkeydown="handleEnter(this, event)">';
-      } else {
-        modifiedText += char;
-      }
-    }
-
-    var exerciseOutput = document.getElementById('exerciseOutput');
-    exerciseOutput.innerHTML = modifiedText;
-    exerciseOutput.classList.remove('hide');
-
-    // Attach event listeners to each input box
-    var inputs = exerciseOutput.querySelectorAll('input');
-    inputs.forEach(function(input) {
-      input.addEventListener('input', function() {
-        moveToNext(this);
-      });
-      input.addEventListener('keydown', function(event) {
-        handleBackspace(this, event);
-        handleEnter(this, event);
-      });
-    });
-
-    document.getElementById('textInput').classList.add('hide');
-    
-    // Show the "Check Exercise" button
-    document.getElementById('checkButton').classList.remove('hide');
-   // Hide the subtitle
-    var subtitle = document.getElementById('subtitle');
-    subtitle.classList.add('hide');
-    // Focus on the first input box
-    var firstInput = exerciseOutput.querySelector('input');
-    if (firstInput) {
-      firstInput.focus();
+    var englishInput = document.getElementById('englishInput').value;
+    var checkButton = document.getElementById('checkButton');
+    if (textInput.trim() !== '' || englishInput.trim() !== '') {
+      checkButton.classList.add('hide');
     }
   }
 
-    function toggleCheckButtonVisibility() {
-      var textInput = document.getElementById('textInput').value;
-      var checkButton = document.getElementById('checkButton');
-      if (textInput.trim() !== '') {
-        checkButton.classList.add('hide');
-      }
+ function moveToNext(input) {
+  if (input.value.length >= 1) {
+    var userInput = input.value.trim();
+    var correctChar = input.dataset.original;
+
+    // Check if the user's input is correct and apply the specified colors
+    if (userInput.toLowerCase() === correctChar.toLowerCase()) {
+      input.style.backgroundColor = '#cef4ce'; // Correct input (light green)
+    } else {
+      input.style.backgroundColor = '#ffb6c19c'; // Incorrect input (light red)
     }
 
-  function insertLetter(letter) {
-    if (focusedInput) {
-      focusedInput.value = letter;
-      moveToNext(focusedInput);
+    // Move to the next input box
+    var nextInput = input.nextElementSibling;
+    if (nextInput && nextInput.tagName === 'INPUT') {
+      nextInput.focus();
     }
   }
+}
 
-  document.addEventListener('focusin', function(event) {
-    if (event.target.tagName.toLowerCase() === 'input') {
-      focusedInput = event.target;
-    }
-  });
+function handleBackspace(input, event) {
+  if (event.key === 'Backspace' && input.value.length === 0) {
+    input.style.backgroundColor = ''; // Reset color for the current input
 
-  function handleBackspace(input, event) {
-    if (event.key === 'Backspace' && input.value.length === 0) {
-      var prevInput = input.previousElementSibling;
-      if (prevInput && prevInput.tagName === 'INPUT') {
-        prevInput.focus();
-      }
+    // Move focus to the previous input field
+    var prevInput = input.previousElementSibling;
+    if (prevInput && prevInput.tagName === 'INPUT') {
+      prevInput.focus();
+      prevInput.style.backgroundColor = ''; // Reset color for the previous input
     }
   }
+}
 
   function isConsonant(char) {
-    // Remove accents from the character and then check if it's a consonant
     var normalizedChar = char.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     return /^[bcdfghjklmnpqrstvwxyzçBCDFGHJKLMNPQRSTVWXYZÇÑñß]$/.test(normalizedChar);
   }
 
-  function moveToNext(input) {
-    if (input.value.length >= 1) {
-      var nextInput = input.nextElementSibling;
-      if (nextInput && nextInput.tagName === 'INPUT') {
-        nextInput.focus();
-      }
-    }
+  function resetActivity() {
+    initialize();
+    document.getElementById('exerciseOutput').classList.add('hide');
+    document.getElementById('feedback').classList.add('hide');
+    document.getElementById('textInput').classList.remove('hide');
+    document.getElementById('englishInput').classList.remove('hide');
   }
 
-  function handleEnter(input, event) {
-    if (event.key === 'Enter') {
-      checkExercise();
-    }
+  function goHome() {
+    window.location.href = "https://adaligand.github.io/Textivator/";
   }
+</script>
 
-    function checkExercise() {
-      var filledInputs = document.querySelectorAll('#exerciseOutput input');
-      var errors = 0;
-
-      filledInputs.forEach(function(input) {
-        var userInput = input.value.trim().toLowerCase();
-        var originalChar = input.dataset.original.toLowerCase();
-
-        if (userInput !== originalChar) {
-          errors++;
-        } else {
-          correctAnswers++; // Increment correct answers count
-        }
-      });
-
-      var feedback = document.getElementById('feedback');
-      var resetButton = document.getElementById('resetButton');
-      if (errors === 0) {
-        feedback.textContent = 'All answers are correct! Total correct answers: ' + correctAnswers;
-        resetButton.classList.remove('hide');
-      } else {
-        feedback.textContent = 'Number of incorrect answers: ' + errors + '. Total correct answers: ' + correctAnswers;
-        resetButton.classList.add('hide');
-      }
-      feedback.classList.remove('hide');
-
-      // Reset correctAnswers variable to 0 after checking the exercise
-      correctAnswers = 0;
-    }
-
-function resetActivity() {
-  var resetButton = document.getElementById('resetButton');
-  var checkButton = document.getElementById('checkButton');
-  var subtitle = document.getElementById('subtitle');
-  var exerciseOutput = document.getElementById('exerciseOutput');
-  var feedback = document.getElementById('feedback');
-  var textInput = document.getElementById('textInput');
-
-  resetButton.classList.add('hide');
-  checkButton.classList.remove('hide');
-  subtitle.classList.remove('hide');
-  exerciseOutput.classList.add('hide');
-  feedback.classList.add('hide');
-  textInput.classList.remove('hide'); // Show the text input field
-  initialize();
-
-  if (subtitle.classList.contains('hide')) {
-    checkButton.classList.remove('hide'); // Show the "Check Exercise" button if the subtitle is hidden
-  } else {
-    checkButton.classList.add('hide'); // Hide the "Check Exercise" button if the subtitle is visible
-  }
-}
-        function goHome() {
-      window.location.href = "https://adaligand.github.io/Textivator/";
-    }
-  </script>
 </body>
 </html>
