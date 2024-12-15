@@ -250,7 +250,7 @@ function generateExercise() {
   var textInput = document.getElementById('textInput').value;
   var englishInput = document.getElementById('englishInput').value;
 
-  if (textInput && englishInput) {
+  if (textInput) {
     var modifiedText = '';
 
     for (var i = 0; i < textInput.length; i++) {
@@ -268,10 +268,6 @@ function generateExercise() {
     exerciseOutput.innerHTML = modifiedText;
     exerciseOutput.classList.remove('hide');
 
-    var englishDisplay = document.getElementById('englishDisplay');
-    englishDisplay.innerHTML = `<strong>English Text:</strong> ${englishInput}`;
-    englishDisplay.classList.remove('hide');
-
     // Hide the subtitle and input boxes
     document.getElementById('subtitle').classList.add('hide');
     document.getElementById('textInput').classList.add('hide');
@@ -281,6 +277,10 @@ function generateExercise() {
 
     document.getElementById('resetButton').classList.remove('hide');
   }
+}
+
+function isVowel(char) {
+  return ['a', 'e', 'i', 'o', 'u', 'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'î', 'ï', 'í', 'ô', 'ó', 'ö', 'ù', 'ú', 'û', 'ü', 'ñ'].includes(char);
 }
 
 // Helper function to check input correctness
