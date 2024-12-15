@@ -56,7 +56,7 @@
       transition: border 0.3s;
       font-size: inherit;
       font-family: inherit;
-      margin-right: 2px; /* Add a small gap between adjacent textboxes */
+      margin-right: 1px; /* Add a small gap between adjacent textboxes */
     }
 
     input:focus {
@@ -209,15 +209,19 @@
     <div class="subtitle" id="subtitle">First letter only : Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
     <div class="screen-title">Fill in the text with the missing letters</div>
     <br><br>
-    <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+    <textarea id="textInput" placeholder="Enter text in French..." oninput="toggleCheckButtonVisibility()"></textarea>
+    <textarea id="englishInput" placeholder="Enter English text here..." oninput="toggleCheckButtonVisibility()"></textarea>
     <select id="languageSelect">
       <option value="french">French</option>
       <option value="german">German</option>
       <option value="spanish">Spanish</option>
     </select>
     <button onclick="generateExercise()">Generate Exercise</button>
-    <button id="checkButton" class="hide" onclick="checkExercise()">Check Exercise</button>
     <div id="exerciseOutput" class="hide"></div>
+     <!-- Container to display English text -->
+     <br><br>
+    <div id="englishDisplay" class="hide"></div>
+
     <div id="feedback" class="hide"></div>
      <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
   </div>
@@ -268,53 +272,70 @@
       var selectedLanguage = this.value;
       generateKeyboard(selectedLanguage);
     });
-
 function generateExercise() {
   var textInput = document.getElementById('textInput').value;
-  var modifiedText = '';
+  var englishInput = document.getElementById('englishInput').value;
 
-  // Split the text into words
+  if (!textInput) {
+    alert('Please enter text in the French input field.');
+    return;
+  }
+
+  var modifiedText = '';
   var words = textInput.split(/\s+/);
 
   words.forEach(function(word) {
     var modifiedWord = '';
     var isFirstLetter = true;
 
-    // Process each character in the word
     for (var i = 0; i < word.length; i++) {
       var char = word.charAt(i);
 
-      // Check if the character is a non-first-letter character and not a punctuation mark
       if (char.match(/[a-zA-Zàáâäèéêëîïíôóöùúûüñßç]/) && !isFirstLetter) {
-        modifiedWord += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event); handleEnter(this, event)">';
+        // Correct syntax to create input elements dynamically
+        modifiedWord += `<input type="text" maxlength="1" size="1" value="" data-original="${char}" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event); handleEnter(this, event)">`;
       } else {
         modifiedWord += char;
       }
 
-      // Update isFirstLetter flag
-      if (char.match(/[a-zA-Zàáâäèéêëîïíôóöùúûüñßç]/)) {
-        isFirstLetter = false;
-      }
+      isFirstLetter = false;
     }
 
-    modifiedText += modifiedWord + ' '; // Add the modified word back with space
+    modifiedText += modifiedWord + ' ';
   });
 
   var exerciseOutput = document.getElementById('exerciseOutput');
   exerciseOutput.innerHTML = modifiedText;
   exerciseOutput.classList.remove('hide');
 
+  // **Handle English Display**
+  var englishDisplay = document.getElementById('englishDisplay');
+
+  if (englishInput) {
+    englishDisplay.innerHTML = englishInput;
+    englishDisplay.classList.remove('hide');
+  } else {
+    englishDisplay.classList.add('hide');  // If English input is blank, hide it
+  }
+
+  // Hide input fields after generating the exercise
   document.getElementById('textInput').classList.add('hide');
-  document.getElementById('checkButton').classList.remove('hide');
-    // Hide the subtitle
-    var subtitle = document.getElementById('subtitle');
-    subtitle.classList.add('hide');
-  // Focus on the first input box
+  document.getElementById('englishInput').classList.add('hide');
+
+  // Hide Generate Exercise button and show Reset button
+  document.querySelector('button[onclick="generateExercise()"]').classList.add('hide');
+  document.getElementById('resetButton').classList.remove('hide');
+
+  var subtitle = document.getElementById('subtitle');
+  subtitle.classList.add('hide');
+
   var firstInput = exerciseOutput.querySelector('input');
   if (firstInput) {
     firstInput.focus();
   }
 }
+
+
     function isVowel(char) {
       return ['a', 'e', 'i', 'o', 'u', 'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'î', 'ï', 'í', 'ô', 'ó', 'ö', 'ù', 'ú', 'û', 'ü', 'ñ'].includes(char);
     }
@@ -334,29 +355,50 @@ function generateExercise() {
       }
     });
 
-    function moveToNext(input) {
-      if (input.value.length >= 1) {
-        var nextInput = input.nextElementSibling;
-        if (nextInput && nextInput.tagName === 'INPUT') {
-          nextInput.focus();
-        }
-      }
+  function moveToNext(input) {
+  if (input.value.length >= 1) {
+    var nextInput = input.nextElementSibling;
+    if (nextInput && nextInput.tagName === 'INPUT') {
+      nextInput.focus();
     }
+    checkInput(input);
+  }
+}
+function handleBackspace(input, event) {
+  if (event.key === 'Backspace') {
+    if (input.value.length === 0) {
+      var prevInput = input.previousElementSibling;
 
-    function handleBackspace(input, event) {
-      if (event.key === 'Backspace' && input.value.length === 0) {
-        var prevInput = input.previousElementSibling;
-        if (prevInput && prevInput.tagName === 'INPUT') {
-          prevInput.focus();
-        }
+      if (prevInput && prevInput.tagName === 'INPUT') {
+        prevInput.focus();
+        prevInput.value = '';  // Clear the value of the previous input
+        prevInput.style.backgroundColor = '';  // Remove the background color
       }
     }
+  }
+}
 
-    function handleEnter(input, event) {
-      if (event.key === 'Enter') {
-        checkExercise();
-      }
-    }
+
+function checkInput(input) {
+  var userInput = input.value.trim().toLowerCase();
+  var originalChar = input.dataset.original.toLowerCase();
+
+  if (userInput === originalChar) {
+    input.style.backgroundColor = '#cef4ce';  // Green for correct input
+  } else if (userInput.length > 0) {
+    input.style.backgroundColor = '#ffb6c19c';  // Yellow for incorrect input
+  } else {
+    input.style.backgroundColor = '';  // Remove background color if input is empty
+  }
+}
+
+
+document.addEventListener('focusin', function(event) {
+  if (event.target.tagName.toLowerCase() === 'input') {
+    focusedInput = event.target;
+  }
+});
+
 
 function checkExercise() {
     var filledInputs = document.querySelectorAll('#exerciseOutput input');
@@ -410,18 +452,36 @@ function checkExercise() {
       restoreParentElementsAfterPrint(); // Restore elements from the parent page after printing
     }
 function resetExercise() {
-  // Reset the text area, hide the exercise output, show the input area, and hide the reset button
+  // Clear the text areas
   document.getElementById('textInput').value = '';
+  document.getElementById('englishInput').value = '';
+
+  // Hide the exercise output
   document.getElementById('exerciseOutput').innerHTML = '';
   document.getElementById('exerciseOutput').classList.add('hide');
-  document.getElementById('textInput').classList.remove('hide');
+
+  // Hide feedback and reset button
+  document.getElementById('feedback').classList.add('hide');
   document.getElementById('resetButton').classList.add('hide');
-  // Hide the check button
-  document.getElementById('checkButton').classList.add('hide');
-  // Show the subtitle
-  var subtitle = document.getElementById('subtitle');
-  subtitle.classList.remove('hide');
+
+  // Show the subtitle and input fields again
+  document.getElementById('subtitle').classList.remove('hide');
+  document.getElementById('textInput').classList.remove('hide');
+  document.getElementById('englishInput').classList.remove('hide');
+
+  // Show the Generate Exercise button
+  document.querySelector('button[onclick="generateExercise()"]').classList.remove('hide');
+
+  // Clear the English Display section
+  var englishDisplay = document.getElementById('englishDisplay');
+  englishDisplay.innerHTML = '';
+  englishDisplay.classList.add('hide');
+
+  // Refocus on the input field for a fresh start
+  document.getElementById('textInput').focus();
 }
+
+
       function goHome() {
       window.location.href = "https://adaligand.github.io/Textivator/";
     }
