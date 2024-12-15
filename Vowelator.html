@@ -137,7 +137,17 @@
   body > * {
     display: none !important;
   }
+ .print-title {
+    display: block !important; /* Force the title to be displayed */
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 
+  .print-title-container {
+    display: block !important; /* Make sure the title container is shown */
+  }
   .container, #footer {
     display: block !important;
   }
@@ -190,233 +200,158 @@
 
   </style>
 </head>
+
 <body onload="initialize()">
-  <!-- Print title container -->
-  <div class="print-title-container">
+    <div class="print-title-container">
     <div class="print-title">Fill in the text with the missing vowels</div>
   </div>
-
   <div class="container">
     <button id="homeButton" onclick="goHome()">Home</button>
     <div class="on-screen-title">Vowelator</div>
     <br><br>
-    <div class="subtitle" id="subtitle">Missing vowels: Use the dropdown menu to select your language keyboard and click on Generate exercise.</div>
-    <div class="screen-title">Fill in the text with the missing vowels</div>
-    <br><br>
-    <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+
+    <div class="subtitle" id="subtitle">
+      Missing vowels: Use the dropdown menu to select your language keyboard and click on Generate exercise.
+    </div>
+
+    <textarea id="textInput" placeholder="Enter text in French..." oninput="toggleCheckButtonVisibility()"></textarea>
+    <textarea id="englishInput" placeholder="Enter English text here..." oninput="toggleCheckButtonVisibility()"></textarea>
+
     <select id="languageSelect">
       <option value="french">French</option>
       <option value="german">German</option>
       <option value="spanish">Spanish</option>
     </select>
-    <button onclick="generateExercise()">Generate Exercise</button>
-    <button id="checkButton" class="hide" onclick="checkExercise()">Check Exercise</button>
+
+    <button id="generateButton" onclick="generateExercise()">Generate Exercise</button>
+    <button id="resetButton" class="hide" onclick="resetExercise()">Reset</button>
+
     <div id="exerciseOutput" class="hide"></div>
+<br><br>
+    <!-- Container to display English text -->
+    <div id="englishDisplay" class="hide"></div>
+
     <div id="feedback" class="hide"></div>
-    <button id="resetButton" class="hide" onclick="resetExercise()">Reset Exercise</button>
   </div>
-  <div class="keyboard-container"></div>
-   <!-- Footer at the bottom -->
-<div id="footer">
-  <span>️🌍 A Daligand</span>
-</div>
+
+  <div id="footer">
+    <span>️🌍 A Daligand</span>
+  </div>
+
   <script>
-    var subtitle; // Declare subtitle variable outside the functions
+    var subtitle;
 
     function initialize() {
-        document.getElementById('textInput').value = '';
-        generateKeyboard(document.getElementById('languageSelect').value); // Generate keyboard based on initially selected language
-        subtitle = document.getElementById('subtitle'); // Assign subtitle element to the variable
+      document.getElementById('textInput').value = '';
+      generateKeyboard(document.getElementById('languageSelect').value);
+      subtitle = document.getElementById('subtitle');
+    }
+function generateExercise() {
+  var textInput = document.getElementById('textInput').value;
+  var englishInput = document.getElementById('englishInput').value;
+
+  if (textInput && englishInput) {
+    var modifiedText = '';
+
+    for (var i = 0; i < textInput.length; i++) {
+      var char = textInput[i];
+
+      if (isVowel(char.toLowerCase())) {
+        // Replace vowels with input boxes
+        modifiedText += `<input type="text" maxlength="1" class="exercise-char" data-original="${char}" oninput="checkInput(this)" />`;
+      } else {
+        modifiedText += char;
+      }
     }
 
-    function generateKeyboard(language) {
-        var keyboardContainer = document.querySelector('.keyboard-container');
-        keyboardContainer.innerHTML = ''; // Clear previous keyboard
+    var exerciseOutput = document.getElementById('exerciseOutput');
+    exerciseOutput.innerHTML = modifiedText;
+    exerciseOutput.classList.remove('hide');
 
-        var vowels = [];
-        switch (language) {
-            case 'french':
-                vowels = ['à', 'â', 'ä','é', 'è', 'ê', 'ë', 'î', 'ï', 'ô','ö', 'ù', 'ü', 'û', 'ç'];
-                break;
-            case 'german':
-                vowels = ['ä', 'ö', 'ü', 'ß'];
-                break;
-            case 'spanish':
-                vowels = ['á', 'é', 'í', 'ó', 'ú', 'ñ'];
-                break;
-            default:
-                vowels = ['a', 'e', 'i', 'o', 'u'];
-                break;
+    var englishDisplay = document.getElementById('englishDisplay');
+    englishDisplay.innerHTML = `<strong>English Text:</strong> ${englishInput}`;
+    englishDisplay.classList.remove('hide');
+
+    // Hide the subtitle and input boxes
+    document.getElementById('subtitle').classList.add('hide');
+    document.getElementById('textInput').classList.add('hide');
+    document.getElementById('englishInput').classList.add('hide');
+    document.getElementById('languageSelect').classList.add('hide');
+    document.getElementById('generateButton').classList.add('hide');
+
+    document.getElementById('resetButton').classList.remove('hide');
+  }
+}
+
+// Helper function to check input correctness
+function checkInput(input) {
+  var userInput = input.value.trim().toLowerCase();
+  var originalChar = input.dataset.original.toLowerCase();
+
+  if (userInput === originalChar) {
+    input.style.backgroundColor = '#cef4ce'; // Green for correct input
+  } else if (userInput) {
+    input.style.backgroundColor = '#ffb6c1'; // Pink for incorrect input
+  } else {
+    input.style.backgroundColor = '';
+  }
+}
+
+// Function to check if a character is a vowel
+function isVowel(char) {
+  return ['a', 'e', 'i', 'o', 'u', 'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'î', 'ï', 'í', 'ô', 'ó', 'ö', 'ù', 'ú', 'û', 'ü', 'ñ'].includes(char);
+}
+
+
+function resetExercise() {
+  document.getElementById('textInput').value = '';
+  document.getElementById('englishInput').value = '';
+  document.getElementById('exerciseOutput').innerHTML = '';
+  document.getElementById('exerciseOutput').classList.add('hide');
+  document.getElementById('englishDisplay').classList.add('hide');
+
+  document.getElementById('generateButton').classList.remove('hide');
+  document.getElementById('resetButton').classList.add('hide');
+
+  // Show the subtitle and input boxes again
+  document.getElementById('subtitle').classList.remove('hide');
+  document.getElementById('textInput').classList.remove('hide');
+  document.getElementById('englishInput').classList.remove('hide');
+  document.getElementById('languageSelect').classList.remove('hide');
+}
+
+
+    function checkInput(input) {
+      var userInput = input.value.trim().toLowerCase();
+      var originalChar = input.dataset.original.toLowerCase();
+
+      if (userInput && userInput === originalChar) {
+        input.style.backgroundColor = '#cef4ce';
+      } else if (userInput) {
+        input.style.backgroundColor = '#ffb6c19c';
+      } else {
+        input.style.backgroundColor = '';
+      }
+    }
+
+    function moveToNext(input, event) {
+      if (event.key === 'Backspace' && input.value === '') {
+        input.style.backgroundColor = '';
+        var prevInput = input.previousElementSibling;
+        if (prevInput && prevInput.tagName === 'INPUT') {
+          prevInput.focus();
         }
-
-        vowels.forEach(function (vowel) {
-            var button = document.createElement('button');
-            button.innerHTML = vowel; // Use innerHTML to handle HTML entities
-            button.className = 'keyboard-button';
-            button.setAttribute('onclick', 'insertLetter("' + vowel + '")');
-            keyboardContainer.appendChild(button);
-        });
-    }
-
-    // Function to handle language selection change
-    document.getElementById('languageSelect').addEventListener('change', function () {
-        var selectedLanguage = this.value;
-        generateKeyboard(selectedLanguage);
-    });
-
-    function generateExercise() {
-        var textInput = document.getElementById('textInput').value;
-        var modifiedText = '';
-
-        for (var i = 0; i < textInput.length; i++) {
-            var char = textInput[i];
-            if (isVowel(char.toLowerCase())) {
-                // Combine both onkeydown attributes into one
-                modifiedText += '<input type="text" maxlength="1" size="1" value="" data-original="' + char + '" oninput="moveToNext(this)" onkeydown="handleBackspace(this, event); handleEnter(this, event)">';
-            } else {
-                modifiedText += char;
-            }
+      } else if (input.value.length >= 1) {
+        var nextInput = input.nextElementSibling;
+        if (nextInput && nextInput.tagName === 'INPUT') {
+          nextInput.focus();
         }
-
-        var exerciseOutput = document.getElementById('exerciseOutput');
-        exerciseOutput.innerHTML = modifiedText;
-        exerciseOutput.classList.remove('hide');
-
-        document.getElementById('textInput').classList.add('hide');
-        document.getElementById('checkButton').classList.remove('hide');
-
-        // Hide the subtitle
-        subtitle.classList.add('hide');
-
-        // Focus on the first input box
-        var firstInput = exerciseOutput.querySelector('input');
-        if (firstInput) {
-            firstInput.focus();
-        }
+      }
     }
 
-    function isVowel(char) {
-        return ['a', 'e', 'i', 'o', 'u', 'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'î', 'ï', 'í', 'ô', 'ó', 'ö', 'ù', 'ú', 'û', 'ü', 'ñ'].includes(char);
-    }
-
-    var focusedInput; // Variable to store the currently focused input element
-
-    function insertLetter(letter) {
-        if (focusedInput) {
-            focusedInput.value = letter;
-            moveToNext(focusedInput);
-        }
-    }
-
-    document.addEventListener('focusin', function(event) {
-        if (event.target.tagName.toLowerCase() === 'input') {
-            focusedInput = event.target;
-        }
-    });
-
-    function moveToNext(input) {
-        if (input.value.length >= 1) {
-            var nextInput = input.nextElementSibling;
-            if (nextInput && nextInput.tagName === 'INPUT') {
-                nextInput.focus();
-            }
-        }
-    }
-
-    function handleBackspace(input, event) {
-        if (event.key === 'Backspace' && input.value.length === 0) {
-            var prevInput = input.previousElementSibling;
-            if (prevInput && prevInput.tagName === 'INPUT') {
-                prevInput.focus();
-            }
-        }
-    }
-
-    function handleEnter(input, event) {
-        if (event.key === 'Enter') {
-            checkExercise();
-        }
-    }
-
-    function checkExercise() {
-        var filledInputs = document.querySelectorAll('#exerciseOutput input');
-        var errors = 0;
-
-        filledInputs.forEach(function(input) {
-            var userInput = input.value.trim().toLowerCase();
-            var originalChar = input.dataset.original.toLowerCase();
-
-            if (userInput !== originalChar) {
-                errors++;
-            }
-        });
-
-        var feedback = document.getElementById('feedback');
-        var resetButton = document.getElementById('resetButton');
-
-        if (errors === 0) {
-            feedback.textContent = 'All answers are correct!';
-            resetButton.classList.remove('hide'); // Show reset button if all answers are correct
-        } else {
-            feedback.textContent = 'Number of incorrect answers: ' + errors;
-            resetButton.classList.add('hide'); // Hide reset button if there are errors
-        }
-        feedback.classList.remove('hide');
-    }
-
-    function resetExercise() {
-        // Clear text input, hide exercise output and feedback
-        document.getElementById('textInput').value = '';
-        document.getElementById('exerciseOutput').innerHTML = '';
-        document.getElementById('exerciseOutput').classList.add('hide');
-        document.getElementById('feedback').classList.add('hide');
-
-        // Show text input, hide reset button
-        document.getElementById('textInput').classList.remove('hide');
-        document.getElementById('resetButton').classList.add('hide');
-
-        // Always hide the "Check Exercise" button when resetting
-        document.getElementById('checkButton').classList.add('hide');
-
-        // Show subtitle
-        subtitle.classList.remove('hide');
-    }
-
-    // Call generateKeyboard initially with the default language
-    generateKeyboard('german');
-  </script>
-<script>
-    // Function to hide elements from the parent page when printing
-    function hideParentElementsOnPrint() {
-        var parentElements = window.parent.document.querySelectorAll('.element-to-hide-on-print');
-        parentElements.forEach(function(element) {
-            element.style.display = 'none';
-        });
-    }
-
-    // Function to restore hidden elements from the parent page after printing
-    function restoreParentElementsAfterPrint() {
-        var parentElements = window.parent.document.querySelectorAll('.element-to-hide-on-print');
-        parentElements.forEach(function(element) {
-            element.style.display = '';
-        });
-    }
-
-    // Function to check if Ctrl + P is pressed
-    function checkPrintKeyPress(event) {
-        if (event.ctrlKey && event.keyCode === 80) { // Ctrl + P
-            hideParentElementsOnPrint(); // Hide elements from the parent page
-            setTimeout(function() {
-                restoreParentElementsAfterPrint(); // Restore elements from the parent page after printing
-            }, 1000); // Delay to ensure printing is initiated
-        }
-    }
-
-    // Listen for keydown event on the document
-    document.addEventListener('keydown', checkPrintKeyPress);
       function goHome() {
       window.location.href = "https://adaligand.github.io/Textivator/";
     }
-</script>
+  </script>
 </body>
 </html>
