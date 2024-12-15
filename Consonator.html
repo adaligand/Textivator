@@ -179,6 +179,12 @@
     <div id="exerciseOutput" class="hide"></div>
     <div id="feedback" class="hide"></div>
   </div>
+  <!-- Keyboard container -->
+  <div class="keyboard-container">
+    <button class="keyboard-button" onclick="insertLetter('ç')">ç</button>
+    <button class="keyboard-button" onclick="insertLetter('ñ')">ñ</button>
+    <button class="keyboard-button" onclick="insertLetter('ß')">ß</button>
+  </div>
   <div id="footer">
     <span>️🌍 A Daligand</span>
   </div>
@@ -267,7 +273,18 @@ function initialize() {
     }
   }
 }
+ function insertLetter(letter) {
+    if (focusedInput) {
+      focusedInput.value = letter;
+      moveToNext(focusedInput);
+    }
+  }
 
+  document.addEventListener('focusin', function(event) {
+    if (event.target.tagName.toLowerCase() === 'input') {
+      focusedInput = event.target;
+    }
+  });
 function handleBackspace(input, event) {
   if (event.key === 'Backspace' && input.value.length === 0) {
     input.style.backgroundColor = ''; // Reset color for the current input
