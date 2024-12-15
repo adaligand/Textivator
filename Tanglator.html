@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +85,7 @@
     font-size: 26px;
     font-weight: bold;
     text-align: center;
-    margin: 20px 0;
+    margin: 0px 0;
     width: 100%;
   }
 
@@ -174,7 +175,8 @@
 
     <!-- Button to Generate Output -->
     <button onclick="generateExercise()">Generate Exercise</button>
-
+  <!-- Button to Reverse the Output -->
+    <button onclick="reverseChunks()" class="hide" id="reverseButton">Reverse</button>
     <button id="resetButton" class="hide" onclick="resetExercise()">Reset</button>
 
     <!-- Generated Output -->
@@ -185,84 +187,118 @@
 <div id="footer">
   <span>️🌍 A Daligand</span>
 </div>
-  <script>
-    function generateExercise() {
-      const englishInput = document.getElementById('englishInput').value;
-      const frenchInput = document.getElementById('frenchInput').value;
-      const exerciseOutput = document.getElementById('exerciseOutput');
+<script>
+let isReversed = false;
+let exerciseGenerated = false;  // Track if the exercise has been generated
 
-      const englishChunks = getChunks(englishInput);
-      const frenchChunks = getChunks(frenchInput);
+function generateExercise() {
+  const englishInput = document.getElementById('englishInput').value;
+  const frenchInput = document.getElementById('frenchInput').value;
+  const exerciseOutput = document.getElementById('exerciseOutput');
+  const generateButton = document.querySelector('button[onclick="generateExercise()"]');
+  const reverseButton = document.querySelector('button[onclick="reverseChunks()"]');
 
-      let outputHtml = `
-        <div id="print-title" class="print-title">
-          Tangled Translation
-        </div>
+  if (englishInput.trim() === '' || frenchInput.trim() === '') {
+    alert('Please fill in both text areas before generating the exercise.');
+    return;
+  }
 
-        <div class="print-columns">
-         
-          <!-- Column 1: French Ruled Lines -->
-          <div class="column">
-            <div class="headline hide">French</div>
-            ${generateRuledLines(frenchChunks.length)}
-          </div>
+  const englishChunks = getChunks(englishInput);
+  const frenchChunks = getChunks(frenchInput);
 
-          <!-- Column 2: Generated Text -->
-          <div class="column">
-            ${generateTextOutput(frenchChunks, englishChunks)}
-          </div>
+  let outputHtml = `
+    <div id="print-title" class="print-title">
+      Tangled Translation
+    </div>
 
-          <!-- Column 3: English Ruled Lines -->
-          <div class="column">
-            <div class="headline hide">English</div>
-            ${generateRuledLines(englishChunks.length)}
-          </div>
+    <div class="print-columns">
+      <div class="column">
+        <div class="headline hide">French</div>
+        ${generateRuledLines(frenchChunks.length)}
+      </div>
 
-        </div>
-      `;
+      <div class="column">
+        ${generateTextOutput(frenchChunks, englishChunks)}
+      </div>
 
-      exerciseOutput.innerHTML = outputHtml;
-      exerciseOutput.classList.remove('hide');
-      document.getElementById('resetButton').classList.remove('hide');
+      <div class="column">
+        <div class="headline hide">English</div>
+        ${generateRuledLines(englishChunks.length)}
+      </div>
+    </div>
+  `;
+
+  exerciseOutput.innerHTML = outputHtml;
+  exerciseOutput.classList.remove('hide');
+  document.getElementById('resetButton').classList.remove('hide');
+
+  // Hide the Generate button and show the Reverse button
+  generateButton.classList.add('hide');
+  reverseButton.classList.remove('hide');
+
+  exerciseGenerated = true;  // Mark that the exercise has been generated
+}
+
+function getChunks(inputText) {
+  return inputText.split('/').map(chunk => chunk.trim()).filter(chunk => chunk.length > 0);
+}
+
+function reverseChunks() {
+  if (!exerciseGenerated) return;
+
+  isReversed = !isReversed;
+  console.log('isReversed state:', isReversed);  // Debugging log
+  generateExercise();  // Re-generate the exercise with the reverse state
+}
+
+function resetExercise() {
+  document.getElementById('englishInput').value = '';
+  document.getElementById('frenchInput').value = '';
+  document.getElementById('exerciseOutput').innerHTML = '';
+  document.getElementById('exerciseOutput').classList.add('hide');
+
+  const generateButton = document.querySelector('button[onclick="generateExercise()"]');
+  const reverseButton = document.querySelector('button[onclick="reverseChunks()"]');
+
+  generateButton.classList.remove('hide');
+  reverseButton.classList.add('hide');
+
+  document.getElementById('resetButton').classList.add('hide');
+
+  exerciseGenerated = false;
+  isReversed = false;
+}
+
+function generateRuledLines(chunkCount) {
+  const lineHeight = 35; 
+  const columnHeight = 800; 
+  const totalLines = Math.floor(columnHeight / lineHeight);
+  let lines = '';
+  for (let i = 0; i < Math.max(chunkCount, totalLines); i++) {
+    lines += `<div class="ruled-line"></div>`;
+  }
+  return lines;
+}
+
+function generateTextOutput(frenchChunks, englishChunks) {
+  let output = '';
+  const maxChunks = Math.max(frenchChunks.length, englishChunks.length);
+
+  for (let i = 0; i < maxChunks; i++) {
+    if (isReversed) {
+      output += (i % 2 === 0 ? (frenchChunks[i] || '') : (englishChunks[i] || '')) + ' ';
+    } else {
+      output += (i % 2 === 0 ? (englishChunks[i] || '') : (frenchChunks[i] || '')) + ' ';
     }
+  }
 
-    function getChunks(inputText) {
-      return inputText.split('/').map(chunk => chunk.trim()).filter(chunk => chunk.length > 0);
-    }
+  return output;
+}
 
-    function resetExercise() {
-      document.getElementById('englishInput').value = '';
-      document.getElementById('frenchInput').value = '';
-      document.getElementById('exerciseOutput').innerHTML = '';
-      document.getElementById('exerciseOutput').classList.add('hide');
-      document.getElementById('resetButton').classList.add('hide');
-    }
+function goHome() {
+  window.location.href = "https://adaligand.github.io/Textivator/";
+}
+</script>
 
-    function generateRuledLines(chunkCount) {
-      const lineHeight = 35; 
-      const columnHeight = 800; 
-      const totalLines = Math.floor(columnHeight / lineHeight);
-      let lines = '';
-      for (let i = 0; i < Math.max(chunkCount, totalLines); i++) {
-        lines += `<div class="ruled-line"></div>`;
-      }
-      return lines;
-    }
-
-    function generateTextOutput(frenchChunks, englishChunks) {
-      let output = '';
-      for (let i = 0; i < Math.max(frenchChunks.length, englishChunks.length); i++) {
-        if (i % 2 === 0) {
-          output += `${frenchChunks[i] || ''} `;
-        } else {
-          output += `${englishChunks[i] || ''} `;
-        }
-      }
-      return output;
-    }
-          function goHome() {
-      window.location.href = "https://adaligand.github.io/Textivator/";
-    }
-  </script>
 </body>
 </html>
